@@ -1,0 +1,50 @@
+logging:
+  level:
+    com.luna.tenant: DEBUG
+
+server:
+  port: 18030
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 50MB
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 172.16.0.98:8848
+        namespace: luna
+        group: DEV_GROUP
+  datasource:
+    name: luna-tenant
+    url: jdbc:mysql://172.16.0.97:3306/his_tenant?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&useSSL=false
+    username: netin
+    password: 123456
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      auto-commit: true
+      connection-test-query: SELECT 1
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      maximum-pool-size: 15
+      minimum-idle: 15
+  redis:
+    host: 172.16.0.98
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: 5000
+        min-idle: 0
+    password: ''
+    port: 6379
+    timeout: 1000
+
+ribbon:
+  ReadTimeout: 5000
+  ConnectTimeout: 5000
+
+

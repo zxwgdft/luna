@@ -1,0 +1,54 @@
+server:
+  port: 18001
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: luna-gateway
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 50MB
+  cloud:
+    nacos:
+      config:
+        server-addr: 172.16.0.98:8848
+        namespace: luna
+        prefix: luna-gateway
+        file-extension: yaml
+      discovery:
+        server-addr: 172.16.0.98:8848
+        namespace: luna
+    gateway:
+      locator:
+        enabled: true
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - GET
+              - POST
+            allowed-headers: "*"
+            allow-credentials: true
+            max-age: 3600
+            # 允许暴露的header
+            exposed-headers: "New-Token"
+    routes:
+      - id: his_default_route
+        uri: http://localhost:18010
+        predicates:
+          - Path=/his/**
+      - id: tenant_route
+        predicates:
+          - Path=/tenant/**
+        uri: lb://his-tenant
+
+gateway:
+  cors-enabled: true
+  # APP静态资源地址匹配模式
+  app-path-pattern: /static/app/**
+  # APP静态资源地址
+  app-resource-path: classpath:/static/app/

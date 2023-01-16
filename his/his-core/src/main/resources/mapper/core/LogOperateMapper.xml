@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.luna.his.core.mapper.LogOperateMapper">
+
+    <select id="findEmployeeName" resultType="com.luna.his.core.log.FixedTypeConverter$IdName">
+        SELECT id,name FROM org_employee WHERE id IN
+        <foreach collection="ids" index="index" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="findHospitalName" resultType="com.luna.his.core.log.FixedTypeConverter$IdName">
+        SELECT id,name FROM org_hospital WHERE id IN
+        <foreach collection="ids" index="index" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="findPatientName" resultType="com.luna.his.core.log.FixedTypeConverter$IdName">
+        SELECT id,name FROM patient WHERE id IN
+        <foreach collection="ids" index="index" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="findPatientSource" resultType="com.luna.his.core.log.FixedTypeConverter$IdName">
+        SELECT id,name FROM config_patient_source WHERE id IN
+        <foreach collection="ids" index="index" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+
+</mapper>

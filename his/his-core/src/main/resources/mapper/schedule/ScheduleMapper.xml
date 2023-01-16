@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.luna.his.schedule.mapper.ScheduleMapper">
+    <select id="findSchedule" resultType="com.luna.his.schedule.service.vo.ScheduleVO"
+            parameterType="com.luna.his.schedule.service.dto.ScheduleQuery">
+        SELECT
+        a.id,
+        a.employee_id employeeId,
+        a.hospital_id hospitalId,
+        a.schedule_date scheduleDate,
+        a.weekday,
+        a.day,
+        a.is_rest isRest ,
+        a.is_normal isNormal,
+        a.shift1,
+        a.shift2
+        FROM `schedule` a
+        INNER JOIN org_employee b ON a.employee_id = b.id
+        WHERE a.hospital_id = #{hospitalId}
+        <if test="job != null">
+            AND b.job = #{job}
+        </if>
+        <if test="week != null">
+            AND a.week = #{week}
+        </if>
+        <if test="departId != null">
+            AND b.depart_id = #{departId}
+        </if>
+        <if test="employeeId != null">
+            AND b.id = #{employeeId}
+        </if>
+    </select>
+
+    <select id="findFixedSchedule" resultType="com.luna.his.schedule.service.vo.ScheduleVO"
+            parameterType="com.luna.his.schedule.service.dto.ScheduleQuery">
+        SELECT
+        a.id,
+        a.employee_id employeeId,
+        a.hospital_id hospitalId,
+        a.weekday,
+        a.is_rest isRest ,
+        a.is_normal isNormal,
+        a.shift1,
+        a.shift2
+        FROM `schedule_fixed` a
+        INNER JOIN org_employee b ON a.employee_id = b.id
+        WHERE a.hospital_id = #{hospitalId}
+        <if test="job != null">
+            AND b.job = #{job}
+        </if>
+        <if test="departId != null">
+            AND b.depart_id = #{departId}
+        </if>
+        <if test="employeeId != null">
+            AND b.id = #{employeeId}
+        </if>
+    </select>
+</mapper>

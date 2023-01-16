@@ -1,0 +1,11 @@
+spring:
+  jackson:
+    default-property-inclusion: NON_NULL
+    serialization:
+      write-dates-as-timestamps: true
+
+  resources:
+    # 异常页面涉及到
+    static-locations:
+      - classpath:/static/
+      - classpath:/static/app

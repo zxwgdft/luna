@@ -1,0 +1,18 @@
+spring:
+  profiles:
+    active: @spring.profiles.active@
+  jackson:
+    date-format: com.his.framework.web.convert.AutoDateFormat
+    default-property-inclusion: NON_NULL
+    serialization:
+      write-dates-as-timestamps: true
+  mvc:
+    format:
+      date: yyyy-MM-dd HH:mm:ss
+
+mybatis:
+  mapper-locations: classpath:mapper/**/**/*.xml
+
+pagehelper:
+  # 分页合理化（解决选择一个较大页码翻页后，选择搜索条件，搜索结果为总页数为1，但是页码大于1导致不出现结果问题）
+  reasonable: true

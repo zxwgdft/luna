@@ -1,0 +1,20 @@
+package com.luna.his.core.permission;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ * 自定义的简单权限判断注解
+ * <p>
+ * 需要的角色
+ *
+ * @author TontoZhou
+ * @since 2020/3/19
+ */
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface NeedRole {
+    long value();
+}

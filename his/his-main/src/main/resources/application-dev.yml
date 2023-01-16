@@ -1,0 +1,80 @@
+logging:
+  level:
+    com.luna.his: INFO
+
+server:
+  port: 18010
+
+spring:
+  application:
+    name: his-main-default
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 50MB
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 172.16.0.98:8848
+        namespace: luna
+        group: DEV_GROUP
+  datasource:
+    name: his
+    url: jdbc:mysql://172.16.0.97:3306/his?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8&useSSL=false
+    username: netin
+    password: 123456
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      auto-commit: true
+      connection-test-query: SELECT 1
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      maximum-pool-size: 15
+      minimum-idle: 15
+  redis:
+    # 基于Lettuce，用于缓存数据
+    host: 172.16.0.98
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: 5000
+        min-idle: 0
+    password: ''
+    port: 6379
+    timeout: 1000
+  # 基于redisson，用于非缓存操作（分布式锁）
+  redisson:
+    config: |
+      singleServerConfig:
+        address: "redis://172.16.0.98:6379"
+        database: 0
+      threads: 0
+      nettyThreads: 0
+      transportMode: "NIO"
+
+elasticsearch:
+  host: 172.16.0.98
+  port: 9200
+
+# 系统业务相关配置
+his:
+  # 是否开启跨域，如果使用网关则不需要开启
+  cors-enabled: false
+  auth:
+    # 请求中token对应header的域名
+    token-field: Authorization
+    # token过期时长（毫秒）
+    token-expire-milliseconds: 86400000
+    # token长过期时长（毫秒）
+    token-long-expire-milliseconds: 86400000
+    # 刷新的token对应header的域名
+    token-refresh-field: New-Token
+    # token过期剩余间隔多少可以刷新
+    token-refresh-interval-milliseconds: 600000
+    # jwt rsa 私钥
+    rsa-private-key: MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBALGOh_fNszsRdNfLYSwoKnRIsd9YHOu4z56OHUp2VKkmZpfXzG8HQ85fVqzySzFZeBz8F9tVN6R3spMDtJUA-ANX9m-0eg7zYtehL7YV8szEa8Jy9wovzmYlpztuEGeEKTUn-i8kzQUih9EW9iypK4JIKGp9rgDmKBWMUoP1brKPAgMBAAECgYBDIJjFFe6h8UqUXx7Au_q49dbRkpV0hO1xi1cFlNETFiKJW5u9iiiXeDHjtsK4yJOBmclHMeOUeXB45li6UKByuJiCugJJuSmjETyjEeavexKe4nlLQHiIcYOXHwayoCheZFN-T5avD1yQjIzGpbz-pG6sSWG-IfSfD6KaCMXfWQJBAPK9lWjWDlREFaZ2Pf7NkOTDChAViWjkE_UiwDnJ8hRDX6kHEG17p8PMNFol66UHpCdWDWFMsktAGbjIFIhx-jsCQQC7QW93Q0vQe8acCIRuiZNuUG6vmw0ElHOKj9xZ5YFcpiazE55On0CQQkBofUY6haBuMi_lkVNca3h7MaThZo-9AkBAnD28nd1KiKTKngZ6X_UFLvTquxDMHolBYnKP7zTEN_qqXvr8aUGKWDxHEnjagGItJjaBg4yhgvpVuMveVZgpAkEArndwKFleGNhKGvTglrC92Wk9R4YaIetCn5YcAvIPjkgMBItB0xUTrZTct74IodwAtssxzx2Q4qoLLhT5_zx0rQJBAOzjbPGxc-XbawDdcwTndIHioQdIrT0GadJjzh6JI4LGJtX9jbU78xhW2uirpt0NcHnxxKLgkcC47f52irMGHM0
+    # jwt rsa 公钥
+    rsa-public-key: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCxjof3zbM7EXTXy2EsKCp0SLHfWBzruM-ejh1KdlSpJmaX18xvB0POX1as8ksxWXgc_BfbVTekd7KTA7SVAPgDV_ZvtHoO82LXoS-2FfLMxGvCcvcKL85mJac7bhBnhCk1J_ovJM0FIofRFvYsqSuCSChqfa4A5igVjFKD9W6yjwIDAQAB
