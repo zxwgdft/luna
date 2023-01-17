@@ -55,6 +55,9 @@ spring:
       nettyThreads: 0
       transportMode: "NIO"
 
+swagger:
+  enabled: true
+
 elasticsearch:
   host: 172.16.0.98
   port: 9200

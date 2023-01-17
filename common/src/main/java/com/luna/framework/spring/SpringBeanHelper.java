@@ -42,8 +42,7 @@ public class SpringBeanHelper implements BeanFactoryPostProcessor, ApplicationCo
 
     @SuppressWarnings("static-access")
     @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException
-    {
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         this.beanFactory = beanFactory;
     }
 
@@ -155,7 +154,7 @@ public class SpringBeanHelper implements BeanFactoryPostProcessor, ApplicationCo
      * 注册bean
      *
      * @param beanName 注册的bean名称
-     * @param clazz 类型
+     * @param clazz    类型
      * @param function bean定义
      * @return 注册的bean实例
      */
@@ -181,8 +180,8 @@ public class SpringBeanHelper implements BeanFactoryPostProcessor, ApplicationCo
      * 注册bean
      *
      * @param beanName 注册的bean名称
-     * @param clazz 类型
-     * @param args 构造参数
+     * @param clazz    类型
+     * @param args     构造参数
      * @param property bean属性集
      * @return 注册的bean实例
      */

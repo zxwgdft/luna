@@ -1,4 +1,4 @@
-package com.luna.his.controller.core;
+package com.luna.his.controller.internal;
 
 import com.luna.framework.service.ControllerSupport;
 import com.luna.his.api.AuthenticatedUser;
