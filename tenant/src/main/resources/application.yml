@@ -4,7 +4,7 @@ spring:
   profiles:
     active: @spring.profiles.active@
   jackson:
-    date-format: com.his.framework.web.convert.AutoDateFormat
+    date-format: com.luna.framework.web.convert.AutoDateFormat
     default-property-inclusion: NON_NULL
     serialization:
       write-dates-as-timestamps: true

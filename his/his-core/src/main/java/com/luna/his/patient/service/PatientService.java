@@ -11,7 +11,6 @@ import com.luna.his.patient.model.Patient;
 import com.luna.his.patient.model.PatientContact;
 import com.luna.his.patient.model.PatientRelation;
 import com.luna.his.patient.model.PatientSelf;
-import com.luna.his.search.service.PatientSearchService;
 import com.luna.his.patient.service.dto.PatientFullDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,7 +37,7 @@ public class PatientService extends HisServiceSupport<Patient, PatientMapper> {
      *
      * @param patientDTO
      */
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     @ActionLog(module = Module.PATIENT_MANAGE, actionType = ActionType.ADD, action = "新增患者", hasContent = true)
     public void addPatient(PatientFullDTO patientDTO) {
         HisUserSession currentUserSession = (HisUserSession) WebSecurityManager.getCurrentUserSession();

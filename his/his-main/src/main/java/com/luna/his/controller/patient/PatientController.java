@@ -1,8 +1,12 @@
 package com.luna.his.controller.patient;
 
+import com.luna.framework.api.PageResult;
 import com.luna.framework.service.ControllerSupport;
+import com.luna.his.patient.service.PatientSearchService;
 import com.luna.his.patient.service.PatientService;
 import com.luna.his.patient.service.dto.PatientFullDTO;
+import com.luna.his.patient.service.dto.PatientQuery;
+import com.luna.his.patient.service.entity.EsPatient;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +25,13 @@ import javax.validation.Valid;
 public class PatientController extends ControllerSupport {
 
     private final PatientService patientService;
+    private final PatientSearchService patientSearchService;
+
+    @ApiOperation("搜索患者")
+    @PostMapping("/find/page")
+    public PageResult<EsPatient> searchPatient(@RequestBody PatientQuery query) {
+        return patientSearchService.searchPatient(query);
+    }
 
     @ApiOperation("新增患者")
     @PostMapping("/add")

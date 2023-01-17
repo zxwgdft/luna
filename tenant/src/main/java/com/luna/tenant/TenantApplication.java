@@ -14,9 +14,9 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients({
-        "com.his.support.client",
+        "com.luna.support.client",
 })
-@MapperScan(basePackages = "com.his.tenant.mapper")
+@MapperScan(basePackages = "com.luna.tenant.mapper")
 public class TenantApplication {
 
     public static void main(String[] args) {

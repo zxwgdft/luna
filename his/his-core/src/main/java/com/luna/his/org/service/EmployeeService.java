@@ -41,6 +41,19 @@ public class EmployeeService extends HisServiceSupport<Employee, EmployeeMapper>
     private final AccountClient accountClient;
 
     /**
+     * 获取员工信息
+     *
+     * @param id 员工ID
+     * @return
+     */
+    public Employee getEmployee(Long id) {
+        return findOne(
+                new LambdaQueryWrapper<Employee>()
+                        .eq(Employee::getId, id)
+        );
+    }
+
+    /**
      * 查询员工列表
      *
      * @param employeeQuery 员工查询条件
@@ -247,4 +260,6 @@ public class EmployeeService extends HisServiceSupport<Employee, EmployeeMapper>
 
         OperateLogHelper.setDataUpdate(new DataUpdate(originAccountLO, currentAccountLO, null));
     }
+
+
 }

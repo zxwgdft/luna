@@ -10,6 +10,7 @@ import com.luna.his.org.service.dto.HospitalDTO;
 import com.luna.his.org.service.dto.HospitalQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,10 +27,10 @@ import java.util.List;
 @Api(tags = "医院管理")
 @RestController
 @RequestMapping("/his/org/hospital")
+@RequiredArgsConstructor
 public class HospitalController extends ControllerSupport {
 
-    @Autowired
-    private HospitalService hospitalService;
+    private final HospitalService hospitalService;
 
     @PostMapping("/find/page")
     @ApiOperation("查询医院分页列表")

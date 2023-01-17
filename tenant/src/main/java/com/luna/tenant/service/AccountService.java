@@ -13,7 +13,6 @@ import com.luna.his.api.InternalRequestPath;
 import com.luna.tenant.api.*;
 import com.luna.tenant.mapper.AccountMapper;
 import com.luna.tenant.model.Account;
-import com.his.tenant.api.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -22,9 +22,6 @@ public class Data4EmployeeVO {
     @ApiModelProperty("所有角色")
     private List<SysRole> roles;
 
-    @ApiModelProperty("所有科室")
-    private List<Department> departments;
-
     @ApiModelProperty("所有医院")
     private List<Hospital> hospitals;
 

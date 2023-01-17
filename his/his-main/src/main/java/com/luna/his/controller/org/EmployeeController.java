@@ -12,6 +12,7 @@ import com.luna.his.org.service.dto.EmployeeQuery;
 import com.luna.his.sys.service.SysRoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -25,16 +26,12 @@ import java.util.List;
 @Api(tags = "员工管理")
 @RestController
 @RequestMapping("/his/org/employee")
+@RequiredArgsConstructor
 public class EmployeeController extends ControllerSupport {
 
-    @Autowired
-    private EmployeeService employeeService;
-    @Autowired
-    private HospitalService hospitalService;
-    @Autowired
-    private SysRoleService roleService;
-    @Autowired
-    private DepartmentService departmentService;
+    private final EmployeeService employeeService;
+    private final HospitalService hospitalService;
+    private final SysRoleService roleService;
 
     @ApiOperation("查询员工列表（简单信息）")
     @PostMapping("/find/list/simple")
@@ -55,15 +52,15 @@ public class EmployeeController extends ControllerSupport {
     }
 
     @ApiOperation("查询员工列表（分页）")
-    @GetMapping("/get/detail")
-    public EmployeeDetailVO getEmployeeDetail(@RequestParam Long id) {
-        return employeeService.getEmployeeDetail(id);
+    @GetMapping("/get")
+    public Employee getEmployee(@RequestParam Long id) {
+        return employeeService.getEmployee(id);
     }
 
     @ApiOperation("获取员工基础数据")
     @PostMapping("/get/data4Employee")
     public Data4EmployeeVO getData4Employee() {
-        return new Data4EmployeeVO(roleService.findSimpleList(), departmentService.findSimpleList(), hospitalService.findSimpleList());
+        return new Data4EmployeeVO(roleService.findSimpleList(), hospitalService.findSimpleList());
     }
 
     @ApiOperation("新增员工")
@@ -85,25 +82,6 @@ public class EmployeeController extends ControllerSupport {
     public void update(@Valid @RequestBody EmployeeAccountDTO accountDTO, BindingResult bindingResult) {
         validErrorHandler(bindingResult);
         employeeService.createOrUpdateEmployeeAccount(accountDTO);
-    }
-
-    @ApiOperation("根据工作科室查询员工列表（查询不在该科室下的所有员工）")
-    @PostMapping("/find/findEmployeeByWorkingDepartId")
-    public PageResult<Employee> findEmployeeByWorkingDepartId(@RequestBody EmployeeQuery employeeQuery) {
-        return employeeService.findEmployeeByWorkingDepartId(employeeQuery);
-    }
-
-    @ApiOperation("修改工作科室")
-    @PostMapping("/updateWorkDepartIds")
-    public boolean updateWorkDepartIds(@Valid @RequestBody EmployeeDeptDTO employeeDeptDTO, BindingResult bindingResult) {
-        validErrorHandler(bindingResult);
-        return employeeService.updateWorkDepartIds(employeeDeptDTO);
-    }
-
-    @ApiOperation("移除工作科室")
-    @PostMapping("/removeFromWorkDepartIds")
-    public boolean removeFromWorkDepartIds(@RequestParam Long id, @RequestParam Long workingDepartId) {
-        return employeeService.removeFromWorkDepartIds(id, workingDepartId);
     }
 
 

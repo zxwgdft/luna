@@ -1,7 +1,7 @@
 package com.luna.tenant.controller;
 
 import com.luna.framework.service.ControllerSupport;
-import com.his.tenant.api.*;
+import com.luna.tenant.api.*;
 import com.luna.tenant.client.AccountClient;
 import com.luna.tenant.client.TenantClient;
 import com.luna.tenant.model.Account;

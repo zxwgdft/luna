@@ -16,8 +16,8 @@ import com.luna.framework.utils.convert.JsonUtil;
 import com.luna.his.core.HisUserSession;
 import com.luna.his.patient.model.Patient;
 import com.luna.his.patient.service.PatientService;
-import com.luna.his.search.entity.LogOperate;
-import com.luna.his.search.service.LogSearchService;
+import com.luna.his.core.service.entity.LogOperate;
+import com.luna.his.core.service.LogSearchService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
