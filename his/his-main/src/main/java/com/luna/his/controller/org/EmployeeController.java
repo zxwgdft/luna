@@ -9,11 +9,10 @@ import com.luna.his.org.service.HospitalService;
 import com.luna.his.org.service.dto.EmployeeAccountDTO;
 import com.luna.his.org.service.dto.EmployeeDTO;
 import com.luna.his.org.service.dto.EmployeeQuery;
-import com.luna.his.sys.service.SysRoleService;
+import com.luna.his.org.service.OrgRoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +30,7 @@ public class EmployeeController extends ControllerSupport {
 
     private final EmployeeService employeeService;
     private final HospitalService hospitalService;
-    private final SysRoleService roleService;
+    private final OrgRoleService roleService;
 
     @ApiOperation("查询员工列表（简单信息）")
     @PostMapping("/find/list/simple")

@@ -1,4 +1,4 @@
-package com.luna.his.sys.service.dto;
+package com.luna.his.org.service.dto;
 
 import com.luna.framework.api.PageParam;
 import com.luna.framework.service.QueryType;

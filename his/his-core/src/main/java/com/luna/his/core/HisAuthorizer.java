@@ -17,10 +17,10 @@ import org.springframework.beans.factory.annotation.Value;
 
 public class HisAuthorizer implements Authorizer {
 
-    @Value("${his.auth.token-expire-milliseconds:3600000}")
+    @Value("${auth.token-expire-milliseconds:3600000}")
     private int tokenExpireMilliseconds;
 
-    @Value("${his.auth.token-long-expire-milliseconds:3600000}")
+    @Value("${auth.token-long-expire-milliseconds:3600000}")
     private int tokenLongExpireMilliseconds;
 
     @Autowired

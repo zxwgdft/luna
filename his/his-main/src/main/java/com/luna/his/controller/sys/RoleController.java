@@ -1,13 +1,13 @@
 package com.luna.his.controller.sys;
 
 import com.luna.framework.service.ControllerSupport;
-import com.luna.his.sys.model.SysRole;
-import com.luna.his.sys.service.SysRoleService;
-import com.luna.his.sys.service.dto.RolePermissionDTO;
-import com.luna.his.sys.service.dto.RoleQuery;
-import com.luna.his.sys.service.dto.SysRoleCopyDTO;
-import com.luna.his.sys.service.dto.SysRoleDTO;
-import com.luna.his.sys.service.vo.RolePermissionVO;
+import com.luna.his.org.model.OrgRole;
+import com.luna.his.org.service.OrgRoleService;
+import com.luna.his.org.service.dto.RolePermissionDTO;
+import com.luna.his.org.service.dto.RoleQuery;
+import com.luna.his.org.service.dto.RoleCopyDTO;
+import com.luna.his.org.service.dto.RoleDTO;
+import com.luna.his.org.service.vo.RolePermissionVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +26,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RoleController extends ControllerSupport {
 
-    private final SysRoleService roleService;
+    private final OrgRoleService roleService;
 
     @ApiOperation("获取简单信息的角色列表")
     @PostMapping("/find/list/simple")
-    public List<SysRole> findSimpleList(@RequestBody RoleQuery query) {
+    public List<OrgRole> findSimpleList(@RequestBody RoleQuery query) {
         return roleService.findSimpleList(query);
     }
 
@@ -42,21 +42,21 @@ public class RoleController extends ControllerSupport {
 
     @ApiOperation("角色保存")
     @PostMapping("/save")
-    public void save(@Valid @RequestBody SysRoleDTO roleDTO, BindingResult bindingResult) {
+    public void save(@Valid @RequestBody RoleDTO roleDTO, BindingResult bindingResult) {
         validErrorHandler(bindingResult);
         roleService.saveRole(roleDTO);
     }
 
     @ApiOperation("角色修改")
     @PostMapping("/update")
-    public void update(@Valid @RequestBody SysRoleDTO roleDTO, BindingResult bindingResult) {
+    public void update(@Valid @RequestBody RoleDTO roleDTO, BindingResult bindingResult) {
         validErrorHandler(bindingResult);
         roleService.updateRole(roleDTO);
     }
 
     @ApiOperation("角色复制")
     @PostMapping("/copy")
-    public void copy(@Valid @RequestBody SysRoleCopyDTO roleDTO, BindingResult bindingResult) {
+    public void copy(@Valid @RequestBody RoleCopyDTO roleDTO, BindingResult bindingResult) {
         validErrorHandler(bindingResult);
         roleService.copyRole(roleDTO);
     }

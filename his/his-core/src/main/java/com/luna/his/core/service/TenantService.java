@@ -12,7 +12,7 @@ import com.luna.his.org.mapper.EmployeeMapper;
 import com.luna.his.org.mapper.HospitalMapper;
 import com.luna.his.org.model.Employee;
 import com.luna.his.org.model.Hospital;
-import com.luna.his.sys.service.SysRoleService;
+import com.luna.his.org.service.OrgRoleService;
 import com.luna.tenant.api.AccountCreate;
 import com.luna.tenant.client.AccountClient;
 import com.luna.tenant.client.TenantClient;
@@ -31,7 +31,7 @@ public class TenantService {
 
     private final HospitalMapper hospitalMapper;
     private final EmployeeMapper employeeMapper;
-    private final SysRoleService roleService;
+    private final OrgRoleService roleService;
     private final AccountClient accountClient;
     private final TenantClient tenantClient;
 

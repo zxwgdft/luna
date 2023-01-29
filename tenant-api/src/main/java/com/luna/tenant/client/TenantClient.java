@@ -5,7 +5,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "his-tenant", contextId = "tenant")
+@FeignClient(name = "luna-tenant", contextId = "tenant")
 public interface TenantClient {
 
     @ApiOperation(value = "初始化诊所数据成功处理")

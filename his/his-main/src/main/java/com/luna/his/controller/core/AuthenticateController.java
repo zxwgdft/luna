@@ -36,7 +36,6 @@ public class AuthenticateController {
     public LoginResult login(@RequestBody PasswordToken loginUser, HttpServletRequest request, HttpServletResponse response) throws Exception {
         // token 由前端自己负责存储和传递
         String token = webSecurityManager.authorize(loginUser, request, response);
-        HisUserSession user = (HisUserSession) WebSecurityManager.getCurrentUserSession();
         return new LoginResult(token, "", GlobalConstants.USER_TYPE_EMPLOYEE);
     }
 
@@ -52,8 +51,6 @@ public class AuthenticateController {
     public String setCurHospital(@RequestParam Long id) {
         return loginUserService.setCurHospital(id);
     }
-
-
 
 
 }

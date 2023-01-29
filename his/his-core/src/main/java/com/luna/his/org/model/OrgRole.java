@@ -1,4 +1,4 @@
-package com.luna.his.sys.model;
+package com.luna.his.org.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -12,7 +12,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(of = "id")
 @ApiModel(description = "角色")
-public class SysRole extends BaseModel {
+public class OrgRole extends BaseModel {
 
     @TableId(type = IdType.AUTO)
     @SimpleViewField

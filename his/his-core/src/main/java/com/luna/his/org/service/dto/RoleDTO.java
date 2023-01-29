@@ -1,4 +1,4 @@
-package com.luna.his.sys.service.dto;
+package com.luna.his.org.service.dto;
 
 import lombok.Data;
 
@@ -7,7 +7,7 @@ import javax.validation.constraints.Size;
 
 
 @Data
-public class SysRoleDTO {
+public class RoleDTO {
 
     private Long id;
 

@@ -11,7 +11,7 @@ import java.util.List;
 @Slf4j
 public abstract class SecurityManager {
 
-    @Value("${his.auth.token-expire-milliseconds:3600000}")
+    @Value("${auth.token-expire-milliseconds:3600000}")
     protected int tokenExpireMilliseconds;
 
     @Autowired

@@ -18,12 +18,14 @@ import java.util.List;
 @Slf4j
 public class WebSecurityManager extends SecurityManager implements HandlerInterceptor {
 
-    @Value("${his.auth.token-field:Authorization}")
+    @Value("${auth.token-field:Authorization}")
     private String authTokenField;
-    @Value("${his.auth.token-refresh-field:New-Token}")
+    @Value("${auth.token-refresh-field:New-Token}")
     private String refreshTokenField;
-    @Value("${his.auth.token-refresh-interval-milliseconds:1800000}")
+    @Value("${auth.token-refresh-interval-milliseconds:1800000}")
     private long tokenRefreshIntervalMilliseconds;
+    @Value("${auth.token-use-cookie:false}")
+    private boolean tokenUseCookie;
 
     // 当前请求的线程变量
     private final static ThreadLocal<HttpServletRequest> requestThreadLocal = new ThreadLocal<>();
@@ -50,7 +52,7 @@ public class WebSecurityManager extends SecurityManager implements HandlerInterc
         // 先尝试在header获取，没有则再尝试从cookie中获取
         String token = request.getHeader(authTokenField);
         boolean isCookie = false;
-        if (StringUtil.isEmpty(token)) {
+        if (tokenUseCookie && StringUtil.isEmpty(token)) {
             Cookie[] cookies = request.getCookies();
             if (cookies != null) {
                 for (Cookie cookie : cookies) {
@@ -121,17 +123,22 @@ public class WebSecurityManager extends SecurityManager implements HandlerInterc
         requestThreadLocal.set(request);
 
         String jwtToken = authorize(token);
-        response.addCookie(getAuthCookie(jwtToken));
+        if (tokenUseCookie) {
+            response.addCookie(getAuthCookie(jwtToken));
+        }
         return jwtToken;
     }
+
 
     /**
      * web下注销
      */
     public void logout(HttpServletRequest request, HttpServletResponse response) {
-        Cookie cookie = getAuthCookie(null);
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
+        if (tokenUseCookie) {
+            Cookie cookie = getAuthCookie(null);
+            cookie.setMaxAge(0);
+            response.addCookie(cookie);
+        }
     }
 
     protected Cookie getAuthCookie(String value) {

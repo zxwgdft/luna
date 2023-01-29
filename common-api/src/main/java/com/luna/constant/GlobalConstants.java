@@ -3,6 +3,11 @@ package com.luna.constant;
 public interface GlobalConstants {
 
     /**
+     * 租户系统管理员
+     */
+    int USER_TYPE_ADMIN = 99;
+
+    /**
      * 租户
      */
     int USER_TYPE_TENANT = 1;

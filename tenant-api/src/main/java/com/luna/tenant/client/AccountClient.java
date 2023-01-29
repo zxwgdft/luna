@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "his-tenant", contextId = "tenant-account")
+@FeignClient(name = "luna-tenant", contextId = "tenant-account")
 public interface AccountClient {
 
     @ApiOperation(value = "创建用户账号")

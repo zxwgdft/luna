@@ -66,18 +66,20 @@ elasticsearch:
 his:
   # 是否开启跨域，如果使用网关则不需要开启
   cors-enabled: false
-  auth:
-    # 请求中token对应header的域名
-    token-field: Authorization
-    # token过期时长（毫秒）
-    token-expire-milliseconds: 86400000
-    # token长过期时长（毫秒）
-    token-long-expire-milliseconds: 86400000
-    # 刷新的token对应header的域名
-    token-refresh-field: New-Token
-    # token过期剩余间隔多少可以刷新
-    token-refresh-interval-milliseconds: 600000
-    # jwt rsa 私钥
-    rsa-private-key: MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBALGOh_fNszsRdNfLYSwoKnRIsd9YHOu4z56OHUp2VKkmZpfXzG8HQ85fVqzySzFZeBz8F9tVN6R3spMDtJUA-ANX9m-0eg7zYtehL7YV8szEa8Jy9wovzmYlpztuEGeEKTUn-i8kzQUih9EW9iypK4JIKGp9rgDmKBWMUoP1brKPAgMBAAECgYBDIJjFFe6h8UqUXx7Au_q49dbRkpV0hO1xi1cFlNETFiKJW5u9iiiXeDHjtsK4yJOBmclHMeOUeXB45li6UKByuJiCugJJuSmjETyjEeavexKe4nlLQHiIcYOXHwayoCheZFN-T5avD1yQjIzGpbz-pG6sSWG-IfSfD6KaCMXfWQJBAPK9lWjWDlREFaZ2Pf7NkOTDChAViWjkE_UiwDnJ8hRDX6kHEG17p8PMNFol66UHpCdWDWFMsktAGbjIFIhx-jsCQQC7QW93Q0vQe8acCIRuiZNuUG6vmw0ElHOKj9xZ5YFcpiazE55On0CQQkBofUY6haBuMi_lkVNca3h7MaThZo-9AkBAnD28nd1KiKTKngZ6X_UFLvTquxDMHolBYnKP7zTEN_qqXvr8aUGKWDxHEnjagGItJjaBg4yhgvpVuMveVZgpAkEArndwKFleGNhKGvTglrC92Wk9R4YaIetCn5YcAvIPjkgMBItB0xUTrZTct74IodwAtssxzx2Q4qoLLhT5_zx0rQJBAOzjbPGxc-XbawDdcwTndIHioQdIrT0GadJjzh6JI4LGJtX9jbU78xhW2uirpt0NcHnxxKLgkcC47f52irMGHM0
-    # jwt rsa 公钥
-    rsa-public-key: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCxjof3zbM7EXTXy2EsKCp0SLHfWBzruM-ejh1KdlSpJmaX18xvB0POX1as8ksxWXgc_BfbVTekd7KTA7SVAPgDV_ZvtHoO82LXoS-2FfLMxGvCcvcKL85mJac7bhBnhCk1J_ovJM0FIofRFvYsqSuCSChqfa4A5igVjFKD9W6yjwIDAQAB
+
+# 认证相关配置
+auth:
+  # 请求中token对应header的域名
+  token-field: Authorization
+  # token过期时长（毫秒）
+  token-expire-milliseconds: 86400000
+  # token长过期时长（毫秒）
+  token-long-expire-milliseconds: 86400000
+  # 刷新的token对应header的域名
+  token-refresh-field: New-Token
+  # token过期剩余间隔多少可以刷新
+  token-refresh-interval-milliseconds: 600000
+  # jwt rsa 私钥
+  rsa-private-key: MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBALGOh_fNszsRdNfLYSwoKnRIsd9YHOu4z56OHUp2VKkmZpfXzG8HQ85fVqzySzFZeBz8F9tVN6R3spMDtJUA-ANX9m-0eg7zYtehL7YV8szEa8Jy9wovzmYlpztuEGeEKTUn-i8kzQUih9EW9iypK4JIKGp9rgDmKBWMUoP1brKPAgMBAAECgYBDIJjFFe6h8UqUXx7Au_q49dbRkpV0hO1xi1cFlNETFiKJW5u9iiiXeDHjtsK4yJOBmclHMeOUeXB45li6UKByuJiCugJJuSmjETyjEeavexKe4nlLQHiIcYOXHwayoCheZFN-T5avD1yQjIzGpbz-pG6sSWG-IfSfD6KaCMXfWQJBAPK9lWjWDlREFaZ2Pf7NkOTDChAViWjkE_UiwDnJ8hRDX6kHEG17p8PMNFol66UHpCdWDWFMsktAGbjIFIhx-jsCQQC7QW93Q0vQe8acCIRuiZNuUG6vmw0ElHOKj9xZ5YFcpiazE55On0CQQkBofUY6haBuMi_lkVNca3h7MaThZo-9AkBAnD28nd1KiKTKngZ6X_UFLvTquxDMHolBYnKP7zTEN_qqXvr8aUGKWDxHEnjagGItJjaBg4yhgvpVuMveVZgpAkEArndwKFleGNhKGvTglrC92Wk9R4YaIetCn5YcAvIPjkgMBItB0xUTrZTct74IodwAtssxzx2Q4qoLLhT5_zx0rQJBAOzjbPGxc-XbawDdcwTndIHioQdIrT0GadJjzh6JI4LGJtX9jbU78xhW2uirpt0NcHnxxKLgkcC47f52irMGHM0
+  # jwt rsa 公钥
+  rsa-public-key: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCxjof3zbM7EXTXy2EsKCp0SLHfWBzruM-ejh1KdlSpJmaX18xvB0POX1as8ksxWXgc_BfbVTekd7KTA7SVAPgDV_ZvtHoO82LXoS-2FfLMxGvCcvcKL85mJac7bhBnhCk1J_ovJM0FIofRFvYsqSuCSChqfa4A5igVjFKD9W6yjwIDAQAB

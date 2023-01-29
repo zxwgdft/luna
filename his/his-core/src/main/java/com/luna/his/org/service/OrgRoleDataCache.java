@@ -1,4 +1,4 @@
-package com.luna.his.sys.service;
+package com.luna.his.org.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.luna.framework.cache.DataCache;
@@ -6,28 +6,28 @@ import com.luna.framework.utils.StringUtil;
 import com.luna.his.core.permission.Role;
 import com.luna.his.core.permission.RoleContainer;
 import com.luna.his.core.permission.option.*;
-import com.luna.his.sys.model.SysRole;
+import com.luna.his.org.model.OrgRole;
 
 import java.util.*;
 
 /**
  * @author TontoZhou
  */
-public class SysRoleDataCache implements DataCache<RoleContainer> {
+public class OrgRoleDataCache implements DataCache<RoleContainer> {
 
-    private SysRoleService roleService;
+    private OrgRoleService roleService;
     private long tenantId;
 
-    public SysRoleDataCache(SysRoleService roleService, long tenantId) {
+    public OrgRoleDataCache(OrgRoleService roleService, long tenantId) {
         this.roleService = roleService;
         this.tenantId = tenantId;
     }
 
     @Override
     public RoleContainer loadData() {
-        List<SysRole> list = roleService.findList(new LambdaQueryWrapper<SysRole>().eq(SysRole::getTenantId, tenantId));
+        List<OrgRole> list = roleService.findList(new LambdaQueryWrapper<OrgRole>().eq(OrgRole::getTenantId, tenantId));
         Map<Long, Role> roleMap = new HashMap<>((int) (list.size() / 0.75 + 1));
-        for (SysRole item : list) {
+        for (OrgRole item : list) {
             Role role = new Role();
             role.setId(item.getId());
             role.setIsDefault(item.getIsDefault());

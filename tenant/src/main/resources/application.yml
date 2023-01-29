@@ -1,6 +1,6 @@
 spring:
   application:
-    name: his-tenant
+    name: luna-tenant
   profiles:
     active: @spring.profiles.active@
   jackson:

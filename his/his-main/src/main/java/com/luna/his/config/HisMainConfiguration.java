@@ -21,8 +21,8 @@ public class HisMainConfiguration {
      */
     @Bean
     public TokenProvider getTokenProvider(Environment environment) throws Exception {
-        String privateKeyString = environment.getProperty("his.auth.rsa-private-key");
-        String publicKeyString = environment.getProperty("his.auth.rsa-public-key");
+        String privateKeyString = environment.getProperty("auth.rsa-private-key");
+        String publicKeyString = environment.getProperty("auth.rsa-public-key");
         return new RSATokenProvider(privateKeyString, publicKeyString);
     }
 

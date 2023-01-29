@@ -1,24 +1,20 @@
-package com.luna.his.sys.service.vo;
+package com.luna.his.org.service.dto;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * 角色
- *
  * @author TontoZhou
- * @since 2022/12/11
  */
 @Data
-public class RolePermissionVO {
+public class RolePermissionDTO {
 
-    // ID
+    @NotNull(message = "角色不能为空")
     private Long id;
-    // 是否系统默认
-    private Boolean isDefault;
-    // 角色查看等级
+    @NotNull(message = "数据查看等级不能为空")
     private Integer dataLevel;
     // 是否我负责的
     private Boolean isInMyCharge;
@@ -27,9 +23,10 @@ public class RolePermissionVO {
     // 允许查看多少天内报表
     private Integer reportDayLimit;
     // 工作台类型（对应岗位值）
+    @NotNull(message = "我的工作不能为空")
     private Integer workspace;
     // 角色权限code集合
     private Set<String> codes;
-    // BitOption配置
+
     private Map<String, Map<String, Boolean>> optionValues;
 }

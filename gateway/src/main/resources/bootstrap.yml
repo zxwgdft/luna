@@ -15,14 +15,14 @@ spring:
       config:
         server-addr: 172.16.0.98:8848
         namespace: luna
+        group: DEV_GROUP
         prefix: luna-gateway
         file-extension: yaml
       discovery:
         server-addr: 172.16.0.98:8848
         namespace: luna
+        group: DEV_GROUP
     gateway:
-      locator:
-        enabled: true
       globalcors:
         cors-configurations:
           '[/**]':
@@ -36,15 +36,16 @@ spring:
             max-age: 3600
             # 允许暴露的header
             exposed-headers: "New-Token"
-    routes:
-      - id: his_default_route
-        uri: http://localhost:18010
-        predicates:
-          - Path=/his/**
-      - id: tenant_route
-        predicates:
-          - Path=/tenant/**
-        uri: lb://his-tenant
+      routes:
+        - id: his_default_route
+          uri: http://localhost:18010
+          predicates:
+            - Path=/his/**
+            - Header=His-Server, default
+        - id: tenant_route
+          predicates:
+            - Path=/tenant/**
+          uri: lb://luna-tenant
 
 gateway:
   cors-enabled: true

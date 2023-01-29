@@ -1,4 +1,4 @@
-package com.luna.his.sys.service;
+package com.luna.his.org.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -16,12 +16,12 @@ import com.luna.his.core.constant.RoleLevel;
 import com.luna.his.core.framework.HisServiceSupport;
 import com.luna.his.core.permission.Role;
 import com.luna.his.core.permission.RoleContainer;
-import com.luna.his.sys.mapper.SysRoleMapper;
-import com.luna.his.sys.model.SysRole;
-import com.luna.his.sys.service.dto.RolePermissionDTO;
-import com.luna.his.sys.service.dto.SysRoleCopyDTO;
-import com.luna.his.sys.service.dto.SysRoleDTO;
-import com.luna.his.sys.service.vo.RolePermissionVO;
+import com.luna.his.org.mapper.OrgRoleMapper;
+import com.luna.his.org.model.OrgRole;
+import com.luna.his.org.service.dto.RolePermissionDTO;
+import com.luna.his.org.service.dto.RoleCopyDTO;
+import com.luna.his.org.service.dto.RoleDTO;
+import com.luna.his.org.service.vo.RolePermissionVO;
 import com.luna.his.core.permission.option.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ import java.util.Map;
  */
 @Slf4j
 @Service
-public class SysRoleService extends HisServiceSupport<SysRole, SysRoleMapper> implements TenantDataCacheFactory<RoleContainer> {
+public class OrgRoleService extends HisServiceSupport<OrgRole, OrgRoleMapper> implements TenantDataCacheFactory<RoleContainer> {
 
     /**
      * 获取角色的权限明细
@@ -62,8 +62,8 @@ public class SysRoleService extends HisServiceSupport<SysRole, SysRoleMapper> im
      * @param orgRoleDTO
      */
     @Transactional
-    public void saveRole(SysRoleDTO orgRoleDTO) {
-        SysRole model = new SysRole();
+    public void saveRole(RoleDTO orgRoleDTO) {
+        OrgRole model = new OrgRole();
         SimpleBeanCopyUtil.simpleCopy(orgRoleDTO, model);
         model.setId(null);
         model.setIsDefault(false);
@@ -80,16 +80,16 @@ public class SysRoleService extends HisServiceSupport<SysRole, SysRoleMapper> im
      *
      * @param orgRoleDTO
      */
-    public void updateRole(SysRoleDTO orgRoleDTO) {
+    public void updateRole(RoleDTO orgRoleDTO) {
         Long id = orgRoleDTO.getId();
         if (id == null) {
             throw new IllegalRequestException();
         }
         // 只有名称可以修改，所以暂时不更新缓存
         getSqlMapper().update(null,
-                new LambdaUpdateWrapper<SysRole>()
-                        .eq(SysRole::getId, id)
-                        .set(SysRole::getName, orgRoleDTO.getName())
+                new LambdaUpdateWrapper<OrgRole>()
+                        .eq(OrgRole::getId, id)
+                        .set(OrgRole::getName, orgRoleDTO.getName())
         );
     }
 
@@ -98,9 +98,9 @@ public class SysRoleService extends HisServiceSupport<SysRole, SysRoleMapper> im
      *
      * @param roleDTO
      */
-    public void copyRole(SysRoleCopyDTO roleDTO) {
+    public void copyRole(RoleCopyDTO roleDTO) {
         Long id = roleDTO.getCopyId();
-        SysRole role = get(id);
+        OrgRole role = get(id);
         role.setId(null);
         role.setName(roleDTO.getName());
         role.setIsDefault(false);
@@ -119,7 +119,7 @@ public class SysRoleService extends HisServiceSupport<SysRole, SysRoleMapper> im
     @Transactional
     public void updateRolePermission(RolePermissionDTO dto) {
         long id = dto.getId();
-        SysRole role = getWhole(id);
+        OrgRole role = getWhole(id);
         if (role.getIsAdmin()) {
             throw new BusinessException("管理员角色无法修改权限");
         }
@@ -233,10 +233,10 @@ public class SysRoleService extends HisServiceSupport<SysRole, SysRoleMapper> im
      */
     public void removeRole(Long id) {
         getSqlMapper().delete(
-                new LambdaQueryWrapper<SysRole>()
-                        .eq(SysRole::getId, id)
-                        .eq(SysRole::getIsDefault, false)
-                        .eq(SysRole::getTenantId, getHisUserSession().getTenantId())
+                new LambdaQueryWrapper<OrgRole>()
+                        .eq(OrgRole::getId, id)
+                        .eq(OrgRole::getIsDefault, false)
+                        .eq(OrgRole::getTenantId, getHisUserSession().getTenantId())
         );
         // 更新缓存
         TenantDataCacheHelper.dataChanged(RoleContainer.class);
@@ -250,7 +250,7 @@ public class SysRoleService extends HisServiceSupport<SysRole, SysRoleMapper> im
 
     @Override
     public DataCache<RoleContainer> createDataCache(long tenantId) {
-        return new SysRoleDataCache(this, tenantId);
+        return new OrgRoleDataCache(this, tenantId);
     }
 
     /**
@@ -259,10 +259,10 @@ public class SysRoleService extends HisServiceSupport<SysRole, SysRoleMapper> im
      * @return 管理员角色ID
      */
     public long initTenantRole(long tenantId) {
-        try (InputStream inputStream = getClass().getResourceAsStream("/configJson/Role.json")) {
+        try (InputStream inputStream = getClass().getResourceAsStream("/data/Role.json")) {
             Long adminId = null;
-            List<SysRole> roles = JsonUtil.parseJsonList(inputStream, SysRole.class);
-            for (SysRole role : roles) {
+            List<OrgRole> roles = JsonUtil.parseJsonList(inputStream, OrgRole.class);
+            for (OrgRole role : roles) {
                 role.setTenantId(tenantId);
                 save(role);
                 if (role.getIsAdmin()) {

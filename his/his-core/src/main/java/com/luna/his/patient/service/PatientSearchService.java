@@ -5,7 +5,6 @@ import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
-import com.alibaba.fastjson.JSON;
 import com.luna.framework.api.PageResult;
 import com.luna.framework.exception.BusinessException;
 import com.luna.framework.security.WebSecurityManager;
@@ -13,12 +12,12 @@ import com.luna.framework.utils.StringUtil;
 import com.luna.framework.utils.convert.SimpleBeanCopyUtil;
 import com.luna.framework.utils.reflect.LambdaUtil;
 import com.luna.his.core.HisUserSession;
-import com.luna.his.patient.service.dto.PatientFullDTO;
-import com.luna.his.patient.service.entity.EsPatient;
-import com.luna.his.patient.service.dto.PatientQuery;
 import com.luna.his.core.es.ESConstants;
 import com.luna.his.core.es.ESQueryHelper;
 import com.luna.his.core.es.ESUtil;
+import com.luna.his.patient.service.dto.PatientFullDTO;
+import com.luna.his.patient.service.dto.PatientQuery;
+import com.luna.his.patient.service.entity.EsPatient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -150,7 +149,7 @@ public class PatientSearchService {
         patient.setPhoneRes(phoneRes);
 
         if (log.isDebugEnabled()) {
-            log.debug("ElasticSearch新增患者：{}", JSON.toJSONString(patient));
+            log.debug("ElasticSearch新增患者：{}", patient);
         }
 
         try {

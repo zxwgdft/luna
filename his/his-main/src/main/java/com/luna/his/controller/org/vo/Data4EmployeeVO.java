@@ -1,7 +1,7 @@
 package com.luna.his.controller.org.vo;
 
 import com.luna.his.org.model.Hospital;
-import com.luna.his.sys.model.SysRole;
+import com.luna.his.org.model.OrgRole;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -20,7 +20,7 @@ import java.util.List;
 public class Data4EmployeeVO {
 
     @ApiModelProperty("所有角色")
-    private List<SysRole> roles;
+    private List<OrgRole> roles;
 
     @ApiModelProperty("所有医院")
     private List<Hospital> hospitals;

@@ -34,7 +34,6 @@ public class HisUserSession implements UserSession<Long> {
         this.userId = userClaims.getUid();
         this.userName = userClaims.getUnm();
         this.roleIds = parseRole(userClaims.getRid());
-        this.userName = userClaims.getUnm();
         this.userNo = userClaims.getUno();
         this.hospitalId = userClaims.getHid();
         this.hospitalName = userClaims.getHnm();

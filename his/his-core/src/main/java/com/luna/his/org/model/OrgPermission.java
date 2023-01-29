@@ -1,4 +1,4 @@
-package com.luna.his.sys.model;
+package com.luna.his.org.model;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -12,7 +12,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(of = "code")
 @ApiModel(description = "资源权限")
-public class SysPermission {
+public class OrgPermission {
 
     @TableId
     @ApiModelProperty("权限code")
