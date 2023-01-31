@@ -13,9 +13,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(of = "id")
 @ApiModel(description = "租户诊所")
 @TableName("tenant_hospital")
-public class TenantHospital extends BaseModel {
+public class Hospital extends BaseModel {
 
-    public static final int STATE_NONE = 0; // 最初空状态
     public static final int STATE_INITIALIZING = 1; // 初始化中
     public static final int STATE_CREATE_FAIL = 8; // 创建失败，初始化失败
     public static final int STATE_CREATE_SUCCESS = 9; // 创建成功
@@ -32,6 +31,15 @@ public class TenantHospital extends BaseModel {
 
     @ApiModelProperty("是否总部")
     private Boolean isHeadquarter;
+
+    @ApiModelProperty("开始营业时间")
+    private Integer openTime;
+
+    @ApiModelProperty("停止营业时间")
+    private Integer closeTime;
+
+    @ApiModelProperty("休息日")
+    private String restWeekdays;
 
     @ApiModelProperty("状态")
     private Integer state;

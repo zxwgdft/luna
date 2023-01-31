@@ -1,13 +1,11 @@
 package com.luna.tenant.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.luna.framework.api.PageParam;
 import com.luna.framework.api.PageResult;
 import com.luna.framework.service.ControllerSupport;
-import com.luna.tenant.model.Server;
 import com.luna.tenant.model.Tenant;
-import com.luna.tenant.model.TenantHospital;
-import com.luna.tenant.service.TenantHospitalService;
+import com.luna.tenant.model.Hospital;
+import com.luna.tenant.service.HospitalService;
 import com.luna.tenant.service.TenantService;
 import com.luna.tenant.service.dto.*;
 import io.swagger.annotations.Api;
@@ -29,7 +27,7 @@ import java.util.List;
 public class TenantController extends ControllerSupport {
 
     private final TenantService tenantService;
-    private final TenantHospitalService tenantHospitalService;
+    private final HospitalService tenantHospitalService;
 
     @ApiOperation("获取租户")
     @GetMapping("/get")
@@ -78,14 +76,14 @@ public class TenantController extends ControllerSupport {
 
     @ApiOperation("租户创建诊所")
     @PostMapping("/create/hospital")
-    public void createHospital(@RequestBody TenantHospitalDTO param, BindingResult bindingResult) {
+    public void createHospital(@RequestBody HospitalDTO param, BindingResult bindingResult) {
         validErrorHandler(bindingResult);
-        tenantHospitalService.createHospital(param);
+        tenantHospitalService.createHospital(param, false);
     }
 
     @ApiOperation("获取租户诊所列表")
     @GetMapping("/hospital/list")
-    public List<TenantHospital> getTenantHospitalList(@RequestParam Long tenantId) {
-        return tenantHospitalService.findList(new LambdaQueryWrapper<TenantHospital>().eq(TenantHospital::getTenantId, tenantId));
+    public List<Hospital> getTenantHospitalList(@RequestParam Long tenantId) {
+        return tenantHospitalService.findList(new LambdaQueryWrapper<Hospital>().eq(Hospital::getTenantId, tenantId));
     }
 }

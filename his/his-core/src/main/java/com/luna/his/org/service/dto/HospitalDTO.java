@@ -9,6 +9,7 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Getter
 @Setter
@@ -20,15 +21,15 @@ public class HospitalDTO {
 
 	@ApiModelProperty("诊所名称")
 	@NotEmpty(message = "诊所名称不能为空")
-	@Length(max = 50, message = "诊所名称长度不能大于50")
+	@Size(max = 50, message = "诊所名称长度不能大于50")
 	private String name;
 
 	@ApiModelProperty("诊所简称")
-	@Length(max = 50, message = "诊所简称长度不能大于20")
+	@Size(max = 50, message = "诊所简称长度不能大于20")
 	private String shortName;
 
 	@ApiModelProperty("诊所编码")
-	@Length(max = 20, message = "诊所编码长度不能大于20")
+	@Size(max = 20, message = "诊所编码长度不能大于20")
 	private String code;
 
 	@ApiModelProperty("开始营业时间")
@@ -38,19 +39,19 @@ public class HospitalDTO {
 	private Integer closeTime;
 
 	@ApiModelProperty("诊所电话")
-	@Length(max = 15, message = "诊所电话长度不能大于15")
+	@Size(max = 15, message = "诊所电话长度不能大于15")
 	private String phoneNum;
 
 	@ApiModelProperty("联系人")
-	@Length(max = 20, message = "联系人长度不能大于20")
+	@Size(max = 20, message = "联系人长度不能大于20")
 	private String contactName;
 
 	@ApiModelProperty("联系电话")
-	@Length(max = 15, message = "联系电话长度不能大于15")
+	@Size(max = 15, message = "联系电话长度不能大于15")
 	private String contactPhoneNum;
 
 	@ApiModelProperty("")
-	@Length(max = 20, message = "长度不能大于20")
+	@Size(max = 20, message = "长度不能大于20")
 	private String faxNumber;
 
 	@ApiModelProperty("省")
@@ -63,19 +64,19 @@ public class HospitalDTO {
 	private Integer district;
 
 	@ApiModelProperty("地址")
-	@Length(max = 255, message = "地址长度不能大于255")
+	@Size(max = 255, message = "地址长度不能大于255")
 	private String address;
 
 	@ApiModelProperty("邮政编码")
-	@Length(max = 10, message = "邮政编码长度不能大于10")
+	@Size(max = 10, message = "邮政编码长度不能大于10")
 	private String postalCode;
 
 	@ApiModelProperty("网址")
-	@Length(max = 255, message = "网址长度不能大于255")
+	@Size(max = 255, message = "网址长度不能大于255")
 	private String website;
 
 	@ApiModelProperty("图片")
-	@Length(max = 255, message = "图片id长度不能大于255")
+	@Size(max = 255, message = "图片id长度不能大于255")
 	private String imageId;
 
 	@ApiModelProperty("是否启用")

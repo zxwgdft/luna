@@ -6,7 +6,7 @@ import com.luna.tenant.client.AccountClient;
 import com.luna.tenant.client.TenantClient;
 import com.luna.tenant.model.Account;
 import com.luna.tenant.service.AccountService;
-import com.luna.tenant.service.TenantHospitalService;
+import com.luna.tenant.service.HospitalService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class InternalController extends ControllerSupport implements AccountClient, TenantClient {
 
     private final AccountService accountService;
-    private final TenantHospitalService tenantHospitalService;
+    private final HospitalService tenantHospitalService;
 
     @Override
     @ApiOperation("租户初始化")

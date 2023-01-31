@@ -8,8 +8,9 @@ import com.luna.framework.utils.convert.SimpleBeanCopyUtil;
 import com.luna.his.api.InternalRequestPath;
 import com.luna.his.api.ManagerCreateParam;
 import com.luna.tenant.mapper.TenantMapper;
+import com.luna.tenant.model.Hospital;
 import com.luna.tenant.model.Tenant;
-import com.luna.tenant.model.TenantHospital;
+import com.luna.tenant.service.dto.HospitalDTO;
 import com.luna.tenant.service.dto.TenantDTO;
 import com.luna.tenant.service.dto.TenantManagerDTO;
 import com.luna.tenant.service.dto.TenantUpdateDTO;
@@ -29,7 +30,7 @@ public class TenantService extends ServiceSupport<Tenant, TenantMapper> {
 
     private final DynamicHisServlet dynamicHisServlet;
     private final ServerService serverService;
-    private final TenantHospitalService tenantHospitalService;
+    private final HospitalService hospitalService;
 
     /**
      * 新增租户
@@ -101,6 +102,26 @@ public class TenantService extends ServiceSupport<Tenant, TenantMapper> {
     }
 
     /**
+     * 创建租户总部诊所
+     *
+     * @param hospitalDTO
+     */
+    public void createHeadquarter(HospitalDTO hospitalDTO) {
+        long tenantId = hospitalDTO.getTenantId();
+        Tenant tenant = get(tenantId);
+        if (tenant.getHeadquarterId() != null) {
+            throw new BusinessException("租户总部已经存在，不能重复创建！");
+        }
+        Hospital hospital = hospitalService.createHospital(hospitalDTO, true);
+        getSqlMapper().update(null,
+                new LambdaUpdateWrapper<Tenant>()
+                        .eq(Tenant::getId, tenantId)
+                        .isNull(Tenant::getHeadquarterId)
+                        .set(Tenant::getHeadquarterId, hospital.getId())
+        );
+    }
+
+    /**
      * 初始化租户
      *
      * @param param
@@ -108,14 +129,16 @@ public class TenantService extends ServiceSupport<Tenant, TenantMapper> {
     public void createManager(TenantManagerDTO param) {
         ManagerCreateParam createParam = SimpleBeanCopyUtil.simpleCopy(param, new ManagerCreateParam());
         long tenantId = param.getTenantId();
-        TenantHospital hospital = tenantHospitalService.getHeadquarter(tenantId);
-        if (hospital == null) {
-            throw new BusinessException("必须先创建租户的总部诊所后才能创建管理员");
-        }
-        if (hospital.getState() != TenantHospital.STATE_CREATE_SUCCESS) {
+        Tenant tenant = get(tenantId);
+        Long headquarterId = tenant.getHeadquarterId();
+        if (headquarterId == null) {
             throw new BusinessException("租户总部未创建成功，请确认创建成功后再创建管理员");
         }
-        createParam.setHospitalId(hospital.getId());
+        Hospital hospital = hospitalService.get(headquarterId);
+        if (hospital.getState() != Hospital.STATE_CREATE_SUCCESS) {
+            throw new BusinessException("租户总部未创建成功，请确认创建成功后再创建管理员");
+        }
+        createParam.setHospitalId(headquarterId);
         String server = serverService.getTenantServer(tenantId);
         dynamicHisServlet.postJsonRequest(server, InternalRequestPath.TENANT_MANAGER_INIT, createParam, String.class);
     }

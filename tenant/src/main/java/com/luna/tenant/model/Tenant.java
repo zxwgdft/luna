@@ -34,6 +34,9 @@ public class Tenant extends BaseModel {
     @ApiModelProperty("有效期")
     private Date expireDate;
 
+    @ApiModelProperty("总部关联诊所ID")
+    private Long headquarterId;
+
     @ApiModelProperty("是否可用")
     private Boolean isEnabled;
 
