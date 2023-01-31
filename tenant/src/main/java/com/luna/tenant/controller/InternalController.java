@@ -7,7 +7,6 @@ import com.luna.tenant.client.TenantClient;
 import com.luna.tenant.model.Account;
 import com.luna.tenant.service.AccountService;
 import com.luna.tenant.service.TenantHospitalService;
-import com.luna.tenant.api.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -29,28 +28,28 @@ public class InternalController extends ControllerSupport implements AccountClie
     @ApiOperation("租户初始化")
     @PostMapping("/account/create")
     public void createAccount(@RequestBody AccountCreate accountCreate) {
-        accountService.createAccount(accountCreate);
+        accountService.createUserAccount(accountCreate);
     }
 
     @Override
     @ApiOperation(value = "创建用户账号")
     @PostMapping(value = "/account/update")
     public void updateAccount(@RequestBody AccountUpdate accountUpdate) {
-        accountService.updateAccount(accountUpdate);
+        accountService.updateUserAccount(accountUpdate);
     }
 
     @Override
     @ApiOperation(value = "更新用户账号密码")
     @PostMapping(value = "/password/update")
     public void updatePassword(PasswordUpdate passwordUpdate) {
-        accountService.updatePassword(passwordUpdate);
+        accountService.updateUserPassword(passwordUpdate);
     }
 
     @Override
     @ApiOperation(value = "更新用户账号密码")
     @PostMapping(value = "/account/delete")
     public void deleteAccount(AccountDelete accountDelete) {
-        accountService.deleteAccount(accountDelete);
+        accountService.deleteUserAccount(accountDelete);
     }
 
     @Override

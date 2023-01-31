@@ -10,19 +10,19 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "name")
 @ApiModel(description = "服务器")
 @TableName("server")
 public class Server extends BaseModel {
 
-    @ApiModelProperty("ID")
-    @TableId(type = IdType.AUTO)
-    private Long id;
+    @ApiModelProperty("服务器ID")
+    @TableId(type = IdType.NONE)
+    private String id;
 
     @ApiModelProperty("服务器名称")
     private String name;
 
-    @ApiModelProperty("服务应用名称")
-    private String appName;
+    @ApiModelProperty("服务器备注说明")
+    private String note;
 
 }

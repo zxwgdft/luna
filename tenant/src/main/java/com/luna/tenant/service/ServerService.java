@@ -22,8 +22,8 @@ public class ServerService extends ServiceSupport<Server, ServerMapper> {
      * @param tenantId
      * @return
      */
-    public String getTenantAppName(long tenantId) {
-        return getSqlMapper().getServerAppNameByTenant(tenantId);
+    public String getTenantServer(long tenantId) {
+        return getSqlMapper().getServerIdByTenant(tenantId);
     }
 
 

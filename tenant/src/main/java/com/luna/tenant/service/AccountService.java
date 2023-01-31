@@ -12,11 +12,9 @@ import com.luna.framework.utils.secure.SecureUtil;
 import com.luna.his.api.AuthenticatedUser;
 import com.luna.his.api.InternalRequestPath;
 import com.luna.tenant.api.*;
-import com.luna.tenant.core.TenantUserSession;
 import com.luna.tenant.mapper.AccountMapper;
 import com.luna.tenant.model.Account;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +22,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.regex.Pattern;
 
+/**
+ * 用户账号是指通过userId关联了用户的一类账号，他们有具体指向用户数据，例如员工等
+ * 非用户账号是指没有关联用户的一类账号，如业务需要他们可以扩展为用户账号，例如系统管理员，租户管理员等
+ */
 @Service
 @RequiredArgsConstructor
 public class AccountService extends ServiceSupport<Account, AccountMapper> {
@@ -101,7 +103,7 @@ public class AccountService extends ServiceSupport<Account, AccountMapper> {
     /**
      * 创建用户账号
      */
-    public void createAccount(AccountCreate accountCreate) {
+    public void createUserAccount(AccountCreate accountCreate) {
         String password = accountCreate.getPassword();
         if (password == null || !passwordPattern.matcher(password).matches()) {
             throw new BusinessException("密码不符合规则");
@@ -136,9 +138,9 @@ public class AccountService extends ServiceSupport<Account, AccountMapper> {
     }
 
     /**
-     * 更新账号和密码
+     * 更新用户账号和密码
      */
-    public void updateAccount(AccountUpdate accountUpdate) {
+    public void updateUserAccount(AccountUpdate accountUpdate) {
         String account = accountUpdate.getAccount();
         long userId = accountUpdate.getUserId();
         int userType = accountUpdate.getType();
@@ -185,9 +187,9 @@ public class AccountService extends ServiceSupport<Account, AccountMapper> {
 
 
     /**
-     * 更新登录人密码
+     * 更新用户登录人密码
      */
-    public void updatePassword(PasswordUpdate passwordUpdate) {
+    public void updateUserPassword(PasswordUpdate passwordUpdate) {
         String newPassword = passwordUpdate.getNewPassword();
         String oldPassword = passwordUpdate.getOldPassword();
 
@@ -218,16 +220,9 @@ public class AccountService extends ServiceSupport<Account, AccountMapper> {
     }
 
     /**
-     * 更新最近登录时间
-     */
-    public void updateLastLoginTime(String id) {
-        getSqlMapper().updateLastLoginTime(id);
-    }
-
-    /**
      * 根据关联用户类型和ID删除账号
      */
-    public boolean deleteAccount(AccountDelete accountDelete) {
+    public boolean deleteUserAccount(AccountDelete accountDelete) {
         return getSqlMapper().delete(new LambdaQueryWrapper<Account>()
                 .eq(Account::getUserId, accountDelete.getUserId())
                 .eq(Account::getType, accountDelete.getType())) > 0;

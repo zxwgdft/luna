@@ -79,8 +79,8 @@ public class TenantHospitalService extends ServiceSupport<TenantHospital, Tenant
         createParam.setHospitalName(hospital.getName());
         createParam.setTenantId(hospital.getTenantId());
 
-        String appName = serverService.getTenantAppName(hospital.getTenantId());
-        dynamicHisServlet.postJsonRequest(appName, InternalRequestPath.TENANT_HOSPITAL_INIT, createParam, String.class);
+        String server = serverService.getTenantServer(hospital.getTenantId());
+        dynamicHisServlet.postJsonRequest(server, InternalRequestPath.TENANT_HOSPITAL_INIT, createParam, String.class);
 
         // 更新状态为初始化中
         getSqlMapper().update(null,

@@ -10,7 +10,7 @@ import org.apache.ibatis.annotations.Select;
  */
 public interface ServerMapper extends CommonMapper<Server> {
 
-    @Select("SELECT app_name FROM `server` a INNER JOIN `tenant` b ON a.id = b.server_id WHERE b.id = #{tenantId}")
-    String getServerAppNameByTenant(@Param("tenantId") long tenantId);
+    @Select("SELECT a.id FROM `server` a INNER JOIN `tenant` b ON a.id = b.server WHERE b.id = #{tenantId}")
+    String getServerIdByTenant(@Param("tenantId") long tenantId);
 
 }

@@ -17,10 +17,9 @@ import java.util.Date;
 @TableName("tenant")
 public class Tenant extends BaseModel {
 
-    public final static int STATE_NONE = 0;    // 无状态
-    public final static int STATE_CREATING = 1;    // 正在创建
-    public final static int STATE_ENABLED = 8; // 租户可用
-    public final static int STATE_DISABLED = 9;    // 租户不可用
+    public final static int STATE_ENABLED = 1; // 租户可用
+    public final static int STATE_EXPIRED = 2;    // 租户过期
+    public final static int STATE_LOCKED = 3;    // 租户被锁
 
     @ApiModelProperty("ID")
     @TableId(type = IdType.AUTO)
@@ -29,11 +28,17 @@ public class Tenant extends BaseModel {
     @ApiModelProperty("租户名称")
     private String name;
 
-    @ApiModelProperty("服务器ID")
-    private Long serverId;
+    @ApiModelProperty("服务器")
+    private String server;
 
     @ApiModelProperty("有效期")
     private Date expireDate;
+
+    @ApiModelProperty("是否可用")
+    private Boolean isEnabled;
+
+    @ApiModelProperty("是否被锁")
+    private Boolean isLocked;
 
     @ApiModelProperty("状态")
     private Integer state;

@@ -49,11 +49,11 @@ public class TenantAuthorizer implements Authorizer {
             tenantId = 0L;
         }
 
-        if (type != GlobalConstants.USER_TYPE_TENANT || type != GlobalConstants.USER_TYPE_ADMIN) {
+        if (type != GlobalConstants.USER_TYPE_TENANT && type != GlobalConstants.USER_TYPE_ADMIN) {
             throw new SystemException(SystemException.CODE_ERROR_CODE, "不应该认证的用户类型");
         }
 
-        return new TenantUserClaims(account.getUserId(), expiresAt, account.getUserId().toString(), account.getType(),
+        return new TenantUserClaims(account.getId(), expiresAt, account.getAccount(), account.getType(),
                 tenantId, account.getServer());
     }
 
