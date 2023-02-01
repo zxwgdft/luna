@@ -88,4 +88,7 @@ public class Employee extends BaseModel {
 
     @ApiModelProperty("手机是否验证")
     private Boolean isPhoneCertified;
+
+    @ApiModelProperty("是否管理员")
+    private Boolean isManager;
 }

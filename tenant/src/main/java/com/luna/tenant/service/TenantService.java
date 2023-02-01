@@ -7,6 +7,8 @@ import com.luna.framework.utils.TimeUtil;
 import com.luna.framework.utils.convert.SimpleBeanCopyUtil;
 import com.luna.his.api.InternalRequestPath;
 import com.luna.his.api.ManagerCreateParam;
+import com.luna.his.api.TenantManager;
+import com.luna.his.api.TenantManagers;
 import com.luna.tenant.mapper.TenantMapper;
 import com.luna.tenant.model.Hospital;
 import com.luna.tenant.model.Tenant;
@@ -17,8 +19,12 @@ import com.luna.tenant.service.dto.TenantUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author TontoZhou
@@ -141,6 +147,21 @@ public class TenantService extends ServiceSupport<Tenant, TenantMapper> {
         createParam.setHospitalId(headquarterId);
         String server = serverService.getTenantServer(tenantId);
         dynamicHisServlet.postJsonRequest(server, InternalRequestPath.TENANT_MANAGER_INIT, createParam, String.class);
+    }
+
+    /**
+     * 获取租户的管理员列表
+     *
+     * @param tenantId
+     * @return
+     */
+    public List<TenantManager> getTenantManagers(long tenantId) {
+        String server = serverService.getTenantServer(tenantId);
+        Map<String, Object> uriVariables = new HashMap<>();
+        uriVariables.put("tenantId", tenantId);
+        TenantManagers managers = dynamicHisServlet.getRequest(server, InternalRequestPath.GET_TENANT_MANAGERS,
+                uriVariables, TenantManagers.class);
+        return managers.getData();
     }
 
 }

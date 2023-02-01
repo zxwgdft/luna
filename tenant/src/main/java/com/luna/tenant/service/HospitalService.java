@@ -104,6 +104,9 @@ public class HospitalService extends ServiceSupport<Hospital, HospitalMapper> {
         createParam.setHospitalId(hospital.getId());
         createParam.setHospitalName(hospital.getName());
         createParam.setTenantId(hospital.getTenantId());
+        createParam.setOpenTime(hospital.getOpenTime());
+        createParam.setCloseTime(hospital.getCloseTime());
+        createParam.setRestWeekdays(hospital.getRestWeekdays());
 
         String server = serverService.getTenantServer(hospital.getTenantId());
         dynamicHisServlet.postJsonRequest(server, InternalRequestPath.TENANT_HOSPITAL_INIT, createParam, String.class);

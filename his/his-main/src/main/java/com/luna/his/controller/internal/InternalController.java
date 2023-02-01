@@ -1,20 +1,15 @@
 package com.luna.his.controller.internal;
 
 import com.luna.framework.service.ControllerSupport;
-import com.luna.his.api.AuthenticatedUser;
-import com.luna.his.api.HospitalCreateParam;
-import com.luna.his.api.InternalRequestPath;
-import com.luna.his.api.ManagerCreateParam;
+import com.luna.his.api.*;
 import com.luna.his.core.service.LoginUserService;
 import com.luna.his.core.service.TenantService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -51,5 +46,9 @@ public class InternalController extends ControllerSupport {
         return loginUserService.getUserToken(user);
     }
 
-
+    @ApiOperation("获取租户管理员列表")
+    @GetMapping(InternalRequestPath.GET_TENANT_MANAGERS)
+    public TenantManagers getTenantManagers(@PathVariable Long tenantId) {
+        return new TenantManagers(tenantService.getManagers(tenantId));
+    }
 }

@@ -7,6 +7,7 @@ import com.luna.framework.exception.BusinessException;
 import com.luna.framework.security.WebSecurityManager;
 import com.luna.framework.service.ServiceSupport;
 import com.luna.framework.utils.StringUtil;
+import com.luna.framework.utils.UUIDUtil;
 import com.luna.framework.utils.WebUtil;
 import com.luna.framework.utils.secure.SecureUtil;
 import com.luna.his.api.AuthenticatedUser;
@@ -14,7 +15,9 @@ import com.luna.his.api.InternalRequestPath;
 import com.luna.tenant.api.*;
 import com.luna.tenant.mapper.AccountMapper;
 import com.luna.tenant.model.Account;
+import com.luna.tenant.model.Tenant;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,8 +33,15 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class AccountService extends ServiceSupport<Account, AccountMapper> {
 
+    @Value("${auth.default-password:1}")
+    private String defaultPassword;
+
+    @Value("${auth.default-password-random:false}")
+    private boolean randomPassword;
+
     private final DynamicHisServlet dynamicHisServlet;
     private final WebSecurityManager webSecurityManager;
+    private final TenantService tenantService;
 
     private Pattern accountPattern = Pattern.compile("^\\w{6,30}$");
     private Pattern passwordPattern = Pattern.compile("^\\w{6,20}$");
@@ -92,6 +102,14 @@ public class AccountService extends ServiceSupport<Account, AccountMapper> {
                     if (account.getState() != Account.STATE_ENABLED) {
                         throw new BusinessException("账号已被锁定，请联系管理员解决！");
                     }
+
+                    if (account.getType() != GlobalConstants.USER_TYPE_ADMIN) {
+                        Tenant tenant = tenantService.get(account.getTenantId());
+                        if (!tenant.getIsEnabled()) {
+                            throw new BusinessException("当前租户被锁或已经过期，请联系管理员解决！");
+                        }
+                    }
+
                     // 认证成功
                     return account;
                 }
@@ -206,13 +224,14 @@ public class AccountService extends ServiceSupport<Account, AccountMapper> {
         String salt = SecureUtil.createSalt();
         newPassword = SecureUtil.hashByMD5(newPassword, salt);
 
-        Account updateUser = new Account();
-        updateUser.setId(user.getId());
-        updateUser.setSalt(salt);
-        updateUser.setPassword(newPassword);
+        int effect = getSqlMapper().update(null,
+                new LambdaUpdateWrapper<Account>()
+                        .eq(Account::getId, user.getId())
+                        .set(Account::getSalt, salt)
+                        .set(Account::getPassword, newPassword)
+        );
 
-        if (updateSelection(updateUser)) {
-            //是否重新登录，jwt无法直接实现注销
+        if (effect > 0) {
             return;
         }
 
@@ -228,5 +247,37 @@ public class AccountService extends ServiceSupport<Account, AccountMapper> {
                 .eq(Account::getType, accountDelete.getType())) > 0;
     }
 
+    /**
+     * 重置员工用户密码
+     *
+     * @param employeeId
+     * @return
+     */
+    public String resetEmployeePassword(long employeeId) {
+        Account user = getAccountByUser(employeeId, GlobalConstants.USER_TYPE_EMPLOYEE);
+        String salt = SecureUtil.createSalt();
+        String password = getDefaultPassword();
+        String hashPassword = SecureUtil.hashByMD5(password, salt);
+
+        int effect = getSqlMapper().update(null,
+                new LambdaUpdateWrapper<Account>()
+                        .eq(Account::getId, user.getId())
+                        .set(Account::getSalt, salt)
+                        .set(Account::getPassword, hashPassword)
+        );
+
+        if (effect > 0) {
+            return password;
+        }
+
+        throw new BusinessException("重置密码失败");
+    }
+
+    private String getDefaultPassword() {
+        if (randomPassword) {
+            return UUIDUtil.createUUID().substring(0, 10);
+        }
+        return defaultPassword;
+    }
 
 }

@@ -20,4 +20,13 @@ public class HospitalCreateParam {
     @ApiModelProperty("创建医院名称")
     private String hospitalName;
 
+    @ApiModelProperty("开始营业时间")
+    private Integer openTime;
+
+    @ApiModelProperty("停止营业时间")
+    private Integer closeTime;
+
+    @ApiModelProperty("休息日")
+    private String restWeekdays;
+
 }

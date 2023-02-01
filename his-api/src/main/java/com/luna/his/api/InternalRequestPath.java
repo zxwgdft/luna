@@ -21,5 +21,8 @@ public interface InternalRequestPath {
      */
     String GET_USER_TOKEN = "/internal/get/token";
 
-
+    /**
+     * 获取租户管理员列表
+     */
+    String GET_TENANT_MANAGERS = "/internal/get/managers/{tenantId}";
 }

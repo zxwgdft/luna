@@ -5,6 +5,7 @@ import com.luna.framework.api.SystemException;
 import com.luna.framework.utils.others.PinyinUtil;
 import com.luna.his.api.HospitalCreateParam;
 import com.luna.his.api.ManagerCreateParam;
+import com.luna.his.api.TenantManager;
 import com.luna.his.core.EnvironmentUtil;
 import com.luna.his.core.constant.EmployeeJob;
 import com.luna.his.core.util.MultiIdUtil;
@@ -12,6 +13,8 @@ import com.luna.his.org.mapper.EmployeeMapper;
 import com.luna.his.org.mapper.HospitalMapper;
 import com.luna.his.org.model.Employee;
 import com.luna.his.org.model.Hospital;
+import com.luna.his.org.service.EmployeeService;
+import com.luna.his.org.service.HospitalService;
 import com.luna.his.org.service.OrgRoleService;
 import com.luna.tenant.api.AccountCreate;
 import com.luna.tenant.client.AccountClient;
@@ -21,6 +24,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * @author TontoZhou
  */
@@ -29,8 +34,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class TenantService {
 
-    private final HospitalMapper hospitalMapper;
-    private final EmployeeMapper employeeMapper;
+    private final HospitalService hospitalService;
+    private final EmployeeService employeeService;
     private final OrgRoleService roleService;
     private final AccountClient accountClient;
     private final TenantClient tenantClient;
@@ -43,16 +48,16 @@ public class TenantService {
     public void createHospital(HospitalCreateParam createParam) {
         long hospitalId = createParam.getHospitalId();
         try {
-            Hospital hospital = hospitalMapper.selectById(hospitalId);
+            Hospital hospital = hospitalService.get(hospitalId);
             if (hospital == null) {
                 hospital = new Hospital();
                 hospital.setId(createParam.getHospitalId());
                 hospital.setName(createParam.getHospitalName());
-                hospital.setOpenTime(640);
-                hospital.setCloseTime(1080);
-                hospital.setRestWeekdays("1");
+                hospital.setOpenTime(createParam.getOpenTime());
+                hospital.setCloseTime(createParam.getCloseTime());
+                hospital.setRestWeekdays(createParam.getRestWeekdays());
                 hospital.setTenantId(createParam.getTenantId());
-                hospitalMapper.insert(hospital);
+                hospitalService.save(hospital);
             }
 
             // 告诉租户模块
@@ -91,8 +96,9 @@ public class TenantService {
         employee.setTenantId(createParam.getTenantId());
         employee.setRoleIds(MultiIdUtil.joinId2Str(new long[]{adminRoleId}));
         employee.setWorkScope(GlobalConstants.WORK_SCOPE_TENANT);
+        employee.setIsManager(true);
 
-        employeeMapper.insert(employee);
+        employeeService.save(employee);
 
         // 创建账号
         AccountCreate accountCreate = new AccountCreate();
@@ -108,5 +114,7 @@ public class TenantService {
         return employee;
     }
 
-
+    public List<TenantManager> getManagers(Long tenantId) {
+        return employeeService.findTenantManagers(tenantId);
+    }
 }

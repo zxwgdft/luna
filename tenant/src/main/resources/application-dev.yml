@@ -51,6 +51,10 @@ ribbon:
 tenant:
   # 是否开启跨域，如果使用网关则不需要开启
   cors-enabled: false
+  # 随机密码开关（优先级高于默认密码）
+  default-password-random: false
+  # 默认密码
+  default-password: 123456
 
 # 认证相关配置
 auth:

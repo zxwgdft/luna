@@ -8,6 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Map;
+
 /**
  * 动态调用his相关服务
  *
@@ -36,7 +38,21 @@ public class DynamicHisServlet {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Req> entity = new HttpEntity<>(param, headers);
-        return restTemplate.postForEntity(url, entity, clazz).getBody();
+        return restTemplate.postForObject(url, entity, clazz);
     }
 
+    /**
+     * 发送get请求
+     *
+     * @param appName
+     * @param path
+     * @param uriVariables
+     * @param clazz
+     * @param <Res>
+     * @return
+     */
+    public <Res> Res getRequest(String appName, String path, Map<String, Object> uriVariables, Class<Res> clazz) {
+        String url = "http://his-main-" + appName + path;
+        return restTemplate.getForObject(url, clazz, uriVariables);
+    }
 }

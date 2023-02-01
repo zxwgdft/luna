@@ -3,8 +3,10 @@ package com.luna.tenant.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.luna.framework.api.PageResult;
 import com.luna.framework.service.ControllerSupport;
+import com.luna.his.api.TenantManager;
 import com.luna.tenant.model.Tenant;
 import com.luna.tenant.model.Hospital;
+import com.luna.tenant.service.AccountService;
 import com.luna.tenant.service.HospitalService;
 import com.luna.tenant.service.TenantService;
 import com.luna.tenant.service.dto.*;
@@ -28,6 +30,7 @@ public class TenantController extends ControllerSupport {
 
     private final TenantService tenantService;
     private final HospitalService tenantHospitalService;
+    private final AccountService accountService;
 
     @ApiOperation("获取租户")
     @GetMapping("/get")
@@ -67,6 +70,13 @@ public class TenantController extends ControllerSupport {
         tenantService.lockTenant(id, false);
     }
 
+    @ApiOperation("租户创建总部医院")
+    @PostMapping("/create/headquarter")
+    public void createHeadquarter(@RequestBody HospitalDTO param, BindingResult bindingResult) {
+        validErrorHandler(bindingResult);
+        tenantService.createHeadquarter(param);
+    }
+
     @ApiOperation("租户创建诊所管理员")
     @PostMapping("/create/manager")
     public void createManager(@RequestBody TenantManagerDTO param, BindingResult bindingResult) {
@@ -84,6 +94,23 @@ public class TenantController extends ControllerSupport {
     @ApiOperation("获取租户诊所列表")
     @GetMapping("/hospital/list")
     public List<Hospital> getTenantHospitalList(@RequestParam Long tenantId) {
-        return tenantHospitalService.findList(new LambdaQueryWrapper<Hospital>().eq(Hospital::getTenantId, tenantId));
+        return tenantHospitalService.findList(
+                new LambdaQueryWrapper<Hospital>()
+                        .eq(Hospital::getTenantId, tenantId)
+                        .orderByDesc(Hospital::getIsHeadquarter)
+        );
     }
+
+    @ApiOperation("获取租户管理员列表")
+    @GetMapping("/manager/list")
+    public List<TenantManager> getTenantManagerList(@RequestParam Long tenantId) {
+        return tenantService.getTenantManagers(tenantId);
+    }
+
+    @ApiOperation("重置管理员密码")
+    @PostMapping("/manager/password/reset")
+    public void resetManagerPassword(@RequestParam Long id) {
+        accountService.resetEmployeePassword(id);
+    }
+
 }

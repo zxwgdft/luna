@@ -10,6 +10,7 @@ import com.luna.framework.service.QueryWrapperHelper;
 import com.luna.framework.utils.StringUtil;
 import com.luna.framework.utils.convert.SimpleBeanCopyUtil;
 import com.luna.framework.utils.others.PinyinUtil;
+import com.luna.his.api.TenantManager;
 import com.luna.his.core.EnvironmentUtil;
 import com.luna.his.core.framework.HisServiceSupport;
 import com.luna.his.core.log.*;
@@ -130,6 +131,7 @@ public class EmployeeService extends HisServiceSupport<Employee, EmployeeMapper>
         employee.setNamePy(PinyinUtil.toPinyinInitial(employee.getName(), false));
         employee.setWorkHospitalIds(MultiIdUtil.joinId2Str(employeeDTO.getWorkHospitalIds()));
         employee.setWorkScope(GlobalConstants.WORK_SCOPE_HOSPITAL);
+        employee.setIsManager(false);
 
         save(employee);
 
@@ -261,5 +263,7 @@ public class EmployeeService extends HisServiceSupport<Employee, EmployeeMapper>
         OperateLogHelper.setDataUpdate(new DataUpdate(originAccountLO, currentAccountLO, null));
     }
 
-
+    public List<TenantManager> findTenantManagers(Long tenantId) {
+        return getSqlMapper().findManagerByTenant(tenantId);
+    }
 }
