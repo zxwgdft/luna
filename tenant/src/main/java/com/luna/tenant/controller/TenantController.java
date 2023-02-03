@@ -40,7 +40,7 @@ public class TenantController extends ControllerSupport {
 
     @ApiOperation("查询租户列表")
     @PostMapping("/find/page")
-    public PageResult<Tenant> findTenantPage(TenantQuery query) {
+    public PageResult<Tenant> findTenantPage(@RequestBody TenantQuery query) {
         return tenantService.findPage(query);
     }
 
@@ -109,8 +109,8 @@ public class TenantController extends ControllerSupport {
 
     @ApiOperation("重置管理员密码")
     @PostMapping("/manager/password/reset")
-    public void resetManagerPassword(@RequestParam Long id) {
-        accountService.resetEmployeePassword(id);
+    public String resetManagerPassword(@RequestParam Long id) {
+        return accountService.resetEmployeePassword(id);
     }
 
 }

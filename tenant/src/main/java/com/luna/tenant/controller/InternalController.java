@@ -41,14 +41,14 @@ public class InternalController extends ControllerSupport implements AccountClie
     @Override
     @ApiOperation(value = "更新用户账号密码")
     @PostMapping(value = "/password/update")
-    public void updatePassword(PasswordUpdate passwordUpdate) {
+    public void updatePassword(@RequestBody PasswordUpdate passwordUpdate) {
         accountService.updateUserPassword(passwordUpdate);
     }
 
     @Override
     @ApiOperation(value = "更新用户账号密码")
     @PostMapping(value = "/account/delete")
-    public void deleteAccount(AccountDelete accountDelete) {
+    public void deleteAccount(@RequestBody AccountDelete accountDelete) {
         accountService.deleteUserAccount(accountDelete);
     }
 
