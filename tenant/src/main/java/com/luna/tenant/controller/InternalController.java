@@ -6,6 +6,7 @@ import com.luna.tenant.client.AccountClient;
 import com.luna.tenant.client.TenantClient;
 import com.luna.tenant.model.Account;
 import com.luna.tenant.service.AccountService;
+import com.luna.tenant.service.AuthenticateService;
 import com.luna.tenant.service.HospitalService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class InternalController extends ControllerSupport implements AccountClient, TenantClient {
 
+    private final AuthenticateService authenticateService;
     private final AccountService accountService;
     private final HospitalService tenantHospitalService;
 
@@ -56,7 +58,7 @@ public class InternalController extends ControllerSupport implements AccountClie
     @ApiOperation(value = "通过账号密码认证用户")
     @PostMapping(value = "/auth/password")
     public AccountUser authByPassword(@RequestBody PasswordToken passwordToken) {
-        Account account = accountService.authAccountByPassword(passwordToken);
+        Account account = authenticateService.authAccountByPassword(passwordToken);
         return new AccountUser(account.getUserId(), account.getType(), account.getTenantId());
     }
 

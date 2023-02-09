@@ -8,6 +8,7 @@ import com.luna.framework.security.UserClaims;
 import com.luna.tenant.api.PasswordToken;
 import com.luna.tenant.model.Account;
 import com.luna.tenant.service.AccountService;
+import com.luna.tenant.service.AuthenticateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -20,13 +21,13 @@ public class TenantAuthorizer implements Authorizer {
     private int tokenLongExpireMilliseconds;
 
     @Autowired
-    private AccountService accountService;
+    private AuthenticateService authenticateService;
 
     @Override
     public UserClaims authorize(AuthenticationToken token) {
         if (token instanceof PasswordToken) {
             PasswordToken passwordToken = (PasswordToken) token;
-            Account account = accountService.authAccountByPassword(passwordToken);
+            Account account = authenticateService.authAccountByPassword(passwordToken);
             return createUserClaims(account, token);
         } else if (token instanceof AuthenticatedToken) {
             AuthenticatedToken authenticatedToken = (AuthenticatedToken) token;

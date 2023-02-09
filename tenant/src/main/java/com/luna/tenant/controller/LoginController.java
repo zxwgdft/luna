@@ -3,14 +3,12 @@ package com.luna.tenant.controller;
 import com.luna.framework.service.ControllerSupport;
 import com.luna.tenant.api.LoginResult;
 import com.luna.tenant.api.PasswordToken;
-import com.luna.tenant.service.AccountService;
+import com.luna.tenant.service.AuthenticateService;
+import com.luna.tenant.service.dto.LoginUser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,14 +22,20 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 public class LoginController extends ControllerSupport {
 
-    private final AccountService accountService;
+    private final AuthenticateService authenticateService;
 
     @ApiOperation("账号认证")
     @PostMapping("/login")
     public LoginResult authByPassword(@RequestBody PasswordToken passwordToken, HttpServletRequest request,
                                       HttpServletResponse response) throws Exception {
-        return accountService.loginByPassword(passwordToken, request, response);
+        return authenticateService.loginByPassword(passwordToken, request, response);
     }
 
+
+    @ApiOperation("获取用户信息")
+    @GetMapping("/user/info")
+    public LoginUser getUserInfo() {
+        return authenticateService.getCurrentUserInfo();
+    }
 
 }
