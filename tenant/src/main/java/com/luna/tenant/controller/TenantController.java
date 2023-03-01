@@ -29,7 +29,7 @@ import java.util.List;
 public class TenantController extends ControllerSupport {
 
     private final TenantService tenantService;
-    private final HospitalService tenantHospitalService;
+    private final HospitalService hospitalService;
     private final AccountService accountService;
 
     @ApiOperation("获取租户")
@@ -88,13 +88,19 @@ public class TenantController extends ControllerSupport {
     @PostMapping("/create/hospital")
     public void createHospital(@RequestBody HospitalDTO param, BindingResult bindingResult) {
         validErrorHandler(bindingResult);
-        tenantHospitalService.createHospital(param, false);
+        hospitalService.createHospital(param, false);
+    }
+
+    @ApiOperation("初始化诊所")
+    @PostMapping("/init/hospital")
+    public void initHospital(@RequestParam Integer hospitalId) {
+        hospitalService.initHospital(hospitalId);
     }
 
     @ApiOperation("获取租户诊所列表")
     @GetMapping("/hospital/list")
     public List<Hospital> getTenantHospitalList(@RequestParam Long tenantId) {
-        return tenantHospitalService.findList(
+        return hospitalService.findList(
                 new LambdaQueryWrapper<Hospital>()
                         .eq(Hospital::getTenantId, tenantId)
                         .orderByDesc(Hospital::getIsHeadquarter)

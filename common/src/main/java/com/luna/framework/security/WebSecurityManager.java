@@ -1,8 +1,11 @@
 package com.luna.framework.security;
 
 import com.luna.framework.api.AuthenticationToken;
+import com.luna.framework.api.SystemException;
 import com.luna.framework.exception.BusinessException;
 import com.luna.framework.utils.StringUtil;
+import com.luna.framework.utils.secure.RSAEncryptUtil;
+import com.luna.framework.utils.secure.RSAKey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -18,25 +21,35 @@ import java.util.List;
 @Slf4j
 public class WebSecurityManager extends SecurityManager implements HandlerInterceptor {
 
-    @Value("${auth.token-field:Authorization}")
-    private String authTokenField;
-    @Value("${auth.token-refresh-field:New-Token}")
-    private String refreshTokenField;
-    @Value("${auth.token-refresh-interval-milliseconds:1800000}")
-    private long tokenRefreshIntervalMilliseconds;
-    @Value("${auth.token-use-cookie:false}")
-    private boolean tokenUseCookie;
-
     // 当前请求的线程变量
     private final static ThreadLocal<HttpServletRequest> requestThreadLocal = new ThreadLocal<>();
 
-    // 登录页面
-    private String loginUrl = null;
-    private List<String> ignorePrefixes = new ArrayList<>(2);
-    private Class<? extends UserClaims> userClazz;
+    private TokenProvider tokenProvider;
+    private WebSecurityProperties properties;
 
-    public WebSecurityManager(Class<? extends UserClaims> userClazz) {
-        this.userClazz = userClazz;
+    public WebSecurityManager(WebSecurityProperties properties) {
+        this(properties, null);
+    }
+
+    public WebSecurityManager(WebSecurityProperties properties, TokenProvider tokenProvider) {
+        this.properties = properties;
+        if (tokenProvider == null) {
+            // 如果为空，则自动创建默认的TokenProvider
+            try {
+                String privateKey = properties.getRsaPrivateKey();
+                String publicKey = properties.getRsaPublicKey();
+                // 如果配置了RSA秘钥，则根据秘钥生成，如果没有则随机生成
+                if (StringUtil.isEmpty(privateKey) || StringUtil.isEmpty(publicKey)) {
+                    RSAKey key = RSAEncryptUtil.getRSAKey("WebSecurityManager", 1024);
+                    tokenProvider = new RSATokenProvider(key.getPrivateKeyString(), key.getPublicKeyString());
+                } else {
+                    tokenProvider = new RSATokenProvider(privateKey, publicKey);
+                }
+            } catch (Exception e) {
+                throw new SystemException(SystemException.CODE_ERROR_CODE, "创建TokenProvider异常");
+            }
+        }
+        this.tokenProvider = tokenProvider;
     }
 
     @Override
@@ -50,9 +63,10 @@ public class WebSecurityManager extends SecurityManager implements HandlerInterc
 
         // 安全认真部分，获取token并验证
         // 先尝试在header获取，没有则再尝试从cookie中获取
+        String authTokenField = properties.getAuthTokenField();
         String token = request.getHeader(authTokenField);
         boolean isCookie = false;
-        if (tokenUseCookie && StringUtil.isEmpty(token)) {
+        if (properties.isTokenUseCookie() && StringUtil.isEmpty(token)) {
             Cookie[] cookies = request.getCookies();
             if (cookies != null) {
                 for (Cookie cookie : cookies) {
@@ -69,7 +83,7 @@ public class WebSecurityManager extends SecurityManager implements HandlerInterc
             // 校验token
             UserClaims userClaims;
             try {
-                userClaims = tokenProvider.parseJWT(token, userClazz);
+                userClaims = tokenProvider.parseJWT(token, properties.getUserClaimsClass());
                 long interval = userClaims.getExp() - System.currentTimeMillis();
                 if (interval < 0) {
                     // token 过期注销
@@ -77,6 +91,7 @@ public class WebSecurityManager extends SecurityManager implements HandlerInterc
                 } else {
                     UserSession userSession = createUserSession(userClaims);
                     if (userSession != null) {
+                        long tokenRefreshIntervalMilliseconds = properties.getTokenRefreshIntervalMilliseconds();
                         if (tokenRefreshIntervalMilliseconds > 0) {
                             // 检查token是否将要过期，是则刷新一个token
                             if (interval < tokenRefreshIntervalMilliseconds) {
@@ -85,7 +100,7 @@ public class WebSecurityManager extends SecurityManager implements HandlerInterc
                                 if (isCookie) {
                                     response.addCookie(getAuthCookie(newToken));
                                 }
-                                response.addHeader(refreshTokenField, newToken);
+                                response.addHeader(properties.getRefreshTokenField(), newToken);
                             }
                         }
                         sessionMap.set(userSession);
@@ -101,7 +116,7 @@ public class WebSecurityManager extends SecurityManager implements HandlerInterc
         sessionMap.set(null);
 
         // 判断是否登录
-        if (StringUtil.equals(loginUrl, request.getRequestURI())) {
+        if (StringUtil.equals(properties.getLoginUrl(), request.getRequestURI())) {
             return true;
         }
 
@@ -110,31 +125,52 @@ public class WebSecurityManager extends SecurityManager implements HandlerInterc
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
-                                @Nullable Exception ex) throws Exception {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) {
         sessionMap.remove();
         requestThreadLocal.remove();
+    }
+
+    public void setTokenExp(UserClaims userClaims, AuthenticationToken token) {
+        long current = System.currentTimeMillis();
+        if (userClaims.getExp() < current) {
+            userClaims.setExp(current + ((token != null && token.isRememberMe()) ?
+                    properties.getTokenLongExpireMilliseconds() : properties.getTokenExpireMilliseconds()));
+        }
+    }
+
+    /**
+     * 创建基于jwt的token
+     */
+    public String createToken(UserClaims userClaims) {
+        return tokenProvider.createJWT(userClaims);
     }
 
     /**
      * web下认证调用
      */
     public String authorize(AuthenticationToken token, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // 使用注入的认证器及认证监听
+        return authorize(token, authorizers, authenticationListeners, request, response);
+    }
+
+    /**
+     * web下认证调用（指明认证器及认证监听）
+     */
+    public String authorize(AuthenticationToken token, List<Authorizer> authorizers, List<AuthenticationListener> authenticationListeners, HttpServletRequest request, HttpServletResponse response) throws Exception {
         requestThreadLocal.set(request);
 
-        String jwtToken = authorize(token);
-        if (tokenUseCookie) {
+        String jwtToken = authorize(token, authorizers, authenticationListeners);
+        if (properties.isTokenUseCookie()) {
             response.addCookie(getAuthCookie(jwtToken));
         }
         return jwtToken;
     }
 
-
     /**
      * web下注销
      */
     public void logout(HttpServletRequest request, HttpServletResponse response) {
-        if (tokenUseCookie) {
+        if (properties.isTokenUseCookie()) {
             Cookie cookie = getAuthCookie(null);
             cookie.setMaxAge(0);
             response.addCookie(cookie);
@@ -142,7 +178,7 @@ public class WebSecurityManager extends SecurityManager implements HandlerInterc
     }
 
     protected Cookie getAuthCookie(String value) {
-        Cookie cookie = new Cookie(authTokenField, value);
+        Cookie cookie = new Cookie(properties.getAuthTokenField(), value);
         cookie.setPath("/");
         return cookie;
     }
@@ -156,7 +192,8 @@ public class WebSecurityManager extends SecurityManager implements HandlerInterc
      * 注：可以接口形式提供该方法，从而使之更灵活
      */
     public boolean isIgnored(HttpServletRequest request) {
-        if (ignorePrefixes.size() > 0) {
+        List<String> ignorePrefixes = properties.getIgnorePrefixes();
+        if (ignorePrefixes != null && ignorePrefixes.size() > 0) {
             String uri = request.getRequestURI();
             for (String ignorePrefix : ignorePrefixes) {
                 if (uri.startsWith(ignorePrefix)) {
@@ -167,12 +204,13 @@ public class WebSecurityManager extends SecurityManager implements HandlerInterc
         return false;
     }
 
-    public void setLoginUrl(String loginUrl) {
-        this.loginUrl = loginUrl;
-    }
-
-    public void addIgnorePrefix(String ignorePrefix) {
-        this.ignorePrefixes.add(ignorePrefix);
+    /**
+     * 获取配置属性
+     *
+     * @return
+     */
+    public WebSecurityProperties getProperties() {
+        return properties;
     }
 
     /**

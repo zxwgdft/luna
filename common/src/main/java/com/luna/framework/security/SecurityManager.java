@@ -11,17 +11,11 @@ import java.util.List;
 @Slf4j
 public abstract class SecurityManager {
 
-    @Value("${auth.token-expire-milliseconds:3600000}")
-    protected int tokenExpireMilliseconds;
-
-    @Autowired
-    protected TokenProvider tokenProvider;
-    @Autowired
+    @Autowired(required = false)
     protected List<Authorizer> authorizers;
     @Autowired(required = false)
     protected List<AuthenticationListener> authenticationListeners;
-
-    @Autowired
+    @Autowired(required = false)
     protected UserSessionFactory userSessionFactory;
 
     // 用户信息的线程变量
@@ -39,47 +33,63 @@ public abstract class SecurityManager {
 
     /**
      * 创建用户会话
+     * <p>
+     * 如果不想通过UserSessionFactory接口实现，可不注入并重写该方法
      */
-    protected UserSession createUserSession(UserClaims userClaims) {
+    public UserSession createUserSession(UserClaims userClaims) {
         return userSessionFactory.createUserSession(userClaims);
     }
 
     /**
-     * 创建新的token
+     * 生成token
      *
      * @param userClaims 用户声明
      */
-    public String createToken(UserClaims userClaims) {
-        long current = System.currentTimeMillis();
-        if (userClaims.getExp() < current) {
-            userClaims.setExp(current + tokenExpireMilliseconds);
-        }
-        return tokenProvider.createJWT(userClaims);
+    public abstract String createToken(UserClaims userClaims);
+
+    /**
+     * 设置token的过期时间
+     *
+     * @param userClaims
+     */
+    public void setTokenExp(UserClaims userClaims, AuthenticationToken token) {
+
     }
 
     /**
-     * 认证
+     * 认证并返回token
      */
     public String authorize(AuthenticationToken token) throws Exception {
+        return authorize(token, authorizers, authenticationListeners);
+    }
+
+    /**
+     * 认证并返回token
+     */
+    public String authorize(AuthenticationToken token, List<Authorizer> authorizers,
+                            List<AuthenticationListener> authenticationListeners) throws Exception {
         // 只需要认证成功一个则算登录成功
         boolean success = false;
         UserSession userSession = null;
         Exception exception = null;
         String jwtToken = null;
 
-        try {
-            for (Authorizer authorizer : authorizers) {
-                UserClaims userClaims = authorizer.authorize(token);
-                if (userClaims != null) {
-                    userSession = createUserSession(userClaims);
-                    sessionMap.set(userSession);
-                    jwtToken = createToken(userClaims);
-                    success = true;
-                    break;
+        if (authorizers != null && authorizers.size() > 0) {
+            try {
+                for (Authorizer authorizer : authorizers) {
+                    UserClaims userClaims = authorizer.authorize(token);
+                    if (userClaims != null) {
+                        userSession = createUserSession(userClaims);
+                        setTokenExp(userClaims, token);
+                        sessionMap.set(userSession);
+                        jwtToken = createToken(userClaims);
+                        success = true;
+                        break;
+                    }
                 }
+            } catch (Exception e) {
+                exception = e;
             }
-        } catch (Exception e) {
-            exception = e;
         }
 
         if (authenticationListeners != null && authenticationListeners.size() > 0) {
@@ -102,6 +112,5 @@ public abstract class SecurityManager {
 
         throw new BusinessException("登录失败！");
     }
-
 
 }

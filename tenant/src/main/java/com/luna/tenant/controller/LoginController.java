@@ -31,7 +31,6 @@ public class LoginController extends ControllerSupport {
         return authenticateService.loginByPassword(passwordToken, request, response);
     }
 
-
     @ApiOperation("获取用户信息")
     @GetMapping("/user/info")
     public LoginUser getUserInfo() {

@@ -5,6 +5,7 @@ import com.luna.tenant.core.TenantAuthorizer;
 import com.luna.tenant.core.TenantUserClaims;
 import com.luna.tenant.core.TenantUserSessionFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -15,25 +16,12 @@ import org.springframework.core.env.Environment;
  */
 @Slf4j
 @Configuration
+@EnableConfigurationProperties(WebSecurityProperties.class)
 public class TenantConfiguration {
 
-    /**
-     * JWT提供器
-     */
     @Bean
-    public TokenProvider getTokenProvider(Environment environment) throws Exception {
-        String privateKeyString = environment.getProperty("auth.rsa-private-key");
-        String publicKeyString = environment.getProperty("auth.rsa-public-key");
-        return new RSATokenProvider(privateKeyString, publicKeyString);
-    }
-
-    @Bean
-    public WebSecurityManager getSecurityManager(Environment environment) {
-        WebSecurityManager securityManager = new WebSecurityManager(TenantUserClaims.class);
-        securityManager.setLoginUrl("/tenant/login");
-        // 忽略以下前缀请求
-        //securityManager.addIgnorePrefix("/his/open/");
-        return securityManager;
+    public WebSecurityManager getSecurityManager(WebSecurityProperties properties) {
+        return new WebSecurityManager(properties);
     }
 
     @Bean
